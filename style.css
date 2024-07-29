@@ -1,0 +1,359 @@
+html, main {
+  overflow-x:hidden;
+}
+
+#downloadLink {
+  margin-right: 20px;
+  border: none;
+  background: #4e595d;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+  text-decoration: none;
+  text-align: center;
+  padding: 1rem 4rem;
+}
+
+
+#fasdasd {
+  margin: 2rem;
+}
+
+html {
+  font-family: monospace;
+  background: black;
+  color: white;
+}
+
+input[type="button"],
+input[type="submit"],
+::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: #4e595d;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type="button"],
+input[type="submit"],
+::file-selector-button:hover {
+  background: #6b787d;
+}
+input[type="file"]:hover,
+::file-selector-button:hover {
+  background: #6b787d; /* Helleres Grau beim Überfahren: Rot 107, Grün 120, Blau 125 */
+}
+.awasr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 1.6%;
+}
+
+.pictureguy {
+  height: auto;
+  width: 10%;
+}
+
+.maske {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1.5%;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 3.5rem;
+  font-size: 0.65rem;
+  border-top: 1px solid grey;
+}
+
+.footera {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right {
+  padding-right: 5rem;
+}
+input[type="file"] {
+  margin-right: 20px;
+  border: none;
+  background: #0d45a5; /* Hintergrundfarbe ändern */
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type="file"]:hover {
+  background: #084cdf; /* Farbe beim Überfahren ändern */
+}
+.awasr {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Hier wird die Ausrichtung auf das Zentrum gesetzt */
+  padding-top: 1.6%;
+}
+
+.pictureguy {
+  height: auto;
+  width: 10%;
+}
+
+.maske {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1.5%;
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input[type="file"] {
+  margin-right: 20px;
+  border: none;
+  background: #4e595d;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type="file"]:hover {
+  background: #6b787d;
+}
+.buttona {
+  color: white;
+  text-decoration: none;
+  background-color: #4e595d;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  margin-top: 1.5rem;
+}
+
+.buttona:hover {
+  background-color: rgb(5, 32, 41);
+}
+.bauttona:hover {
+  color:grey;
+
+}
+.bauttona {
+  color:white;
+  text-decoration: none;
+}
+input[type="file"]::-webkit-file-upload-button {
+  /* WebKit-Browser (wie Chrome, Safari) */
+  visibility: hidden;
+  opacity: 0;
+}
+
+input[type="file"]::before {
+  content: 'Durchsuchen'; /* Hier kannst du den gewünschten Platzhaltertext einfügen */
+  display: inline-block;
+  background: #4e595d; /* Dunkelgrau: Rot 78, Grün 89, Blau 93 */
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  margin-right: 20px;
+  transition: background .2s ease-in-out;
+}
+
+input[type="file"]:hover::before {
+  background: #6b787d; /* Helleres Grau beim Überfahren: Rot 107, Grün 120, Blau 125 */
+}
+input[type="file"]::-webkit-file-upload-button {
+  /* WebKit-Browser (wie Chrome, Safari) */
+  visibility: hidden;
+  opacity: 0;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  background: #4e595d; /* Dunkelgrau: Rot 78, Grün 89, Blau 93 */
+  border-radius: 0.35rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+  padding: 1rem 8.5rem;
+  margin-top:1rem;
+}
+
+/* Ändere die Hintergrundfarbe beim Überfahren */
+.custom-file-upload:hover {
+  background: #6b787d; /* Helleres Grau beim Überfahren: Rot 107, Grün 120, Blau 125 */
+}
+
+/* Verstecke den Standard-Button */
+input[type="file"] {
+  display: none;
+}
+.divfooter {
+  display: flex;
+  justify-content: center; /* Hier wird der Abstand zwischen den Links eingestellt */
+  align-items: center;
+  height: 100%;
+}
+.footerlinks {
+  text-decoration: none;
+  color: white;
+  margin: 0 1rem;
+}
+@media screen and (max-width: 950px) {
+  .divfooter {
+    font-size: 0.5rem;
+  }
+
+  .footerlinks {
+    margin: 0 0.20rem; /* Auf Handys die Margin entfernen */
+     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  }
+}
+
+.footerlinks:hover{
+  color: grey;
+  transition: 0.5s;
+}
+
+.emailbutton{
+  color:white;
+  text-decoration: none;
+  background-color: #4e595d;
+  padding: 1rem;
+  border-radius: 0.5rem;
+
+}
+.emailbutton:hover{
+  background-color: #4e595d1e;
+  transition: background-color 0.3s ease;
+}
+
+.awasr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 3rem; /* Erhöhen Sie den Abstand oben für die Vorschau */
+}
+
+.preview-container {
+    max-width: 100%;
+    max-height: 50vh; /* Beispiel: Begrenzen Sie die Höhe auf 70% der Bildschirmhöhe */
+    overflow: hidden;
+}
+
+
+.picture-preview {
+   max-width: 100%;
+    max-height: 50vh; /* Beispiel: Begrenzen Sie die Höhe auf 70% der Bildschirmhöhe */
+    overflow: hidden;
+}
+
+/* Fügen Sie eine Klasse für den Text unter der Vorschau hinzu */
+.preview-text {
+    margin-top: 1rem; /* Sie können diesen Abstand je nach Bedarf anpassen */
+    color: white;
+    text-align: center; /* Zentrieren Sie den Text */
+}
+.green{
+	color:white;
+	background-color:green;
+	border-color:green;
+	padding:3rem;
+}
+.yellow{
+	color:white;
+	background-color:yellow;
+	border-color:yellow;
+	padding:3rem;
+	text-shadow: 0 0 5px black;
+}
+.red{
+	color:white;
+	background-color:red;
+	border-color:red;
+	padding:3rem;
+}
+.blue{
+	color:white;
+	background-color:blue;
+	border-color:blue;
+	padding:3rem;
+}
+.purple{
+	color:white;
+	background-color:purple;
+	border-color:purple;
+	padding:3rem;
+	padding-right:1rem;
+}
+.reda{
+	color:white;
+	background-color:red;
+	border-color:red;
+	padding:3rem;
+}
+.greena{
+		color:white;
+	background-color:green;
+	border-color:green;
+	padding:3rem;
+}
+.green:hover{
+	background-color:#7FFF00;
+	border-color:#7FFF00;
+
+}
+.yellow:hover{
+	background:#FFD700;
+	border-color:#FFD700;
+}
+.red:hover{
+	background:#B22222;
+	border-code:#B22222;
+}
+.blue:hover{
+	background:#191970;
+	border-color:#191970;
+}
+.purple:hover{
+	background:#663399;
+	border-color:#663399;
+}
+.flexidoxi{
+	display:flex;
+	border:solid white 1px;
+}
+.alarm{
+	background:red;
+	color:white;
+	padding:1rem;
+}
+.cdaiwjd{
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
+.awijdaowd{
+	display:flex;
+}

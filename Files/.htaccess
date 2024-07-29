@@ -1,0 +1,13 @@
+# .htaccess in the /Files directory
+<Files *>
+    Order Deny,Allow
+    Deny from all
+</Files>
+<Files "../download.php">
+    Order Allow,Deny
+    Allow from all
+</Files>
+<Files "../admin/">
+    Order Allow,Deny
+    Allow from all
+</Files>

@@ -1,0 +1,98 @@
+ body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background:black;
+    color:white;
+}
+
+main {
+    text-align: center;
+}
+
+.awasr {
+    border: 1px solid #ccc;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+button {
+    margin-left: 10px;
+}
+
+a {
+    display: block;
+    margin-top: 20px;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 3.5rem;
+  font-size: 0.35rem;
+  border-top: 1px solid grey;
+}
+
+.footera {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.divfooter {
+  display: flex;
+  justify-content: center; /* Hier wird der Abstand zwischen den Links eingestellt */
+  align-items: center;
+  height: 100%;
+}
+.footerlinks {
+  text-decoration: none;
+  color: white;
+  margin: 0 1rem;
+}
+@media screen and (max-width: 950px) {
+  .divfooter {
+    font-size: 0.5rem;
+  }
+
+  .footerlinks {
+    margin: 0 0.20rem; /* Auf Handys die Margin entfernen */
+     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  }
+}
+
+.footerlinks:hover{
+  color: grey;
+  transition: 0.5s;
+}
