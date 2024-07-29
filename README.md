@@ -14,6 +14,7 @@ This web application allows users to quickly and easily upload files. The applic
 - **File Management**: Administrators can delete and suspend files as needed.
 - **Reporting**: Users can report files that violate terms of service or infringe on intellectual property rights.
 - **Reporting Management**: Administrators can review reported files and take appropriate action.
+- **User Accounts**: Users can create accounts to manage their uploaded files and access additional features.
 
 ## Planned Features
 
