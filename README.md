@@ -21,14 +21,28 @@ This web application allows users to quickly and easily upload files. The applic
 - **Database Migration**: Transition from CSV file storage to a more robust database system for improved scalability and performance.
 - **Enhanced Storage Options**: Implement a feature allowing users to pay for additional storage space. The specifics of this feature are still under consideration and will be detailed in future updates.
 
-## Docker Image
+## Docker Deployment
 
-To deploy this application using Docker, you can use the official Docker image available at [Docker Hub](https://hub.docker.com/repository/docker/hansat04/filesharing-service/general).
-You can pull the image with the following command:
-docker pull hansat04/filesharing-service
-To run the container, use:
-docker run -d -p 8080:80 hansat04/filesharing-service
+### Docker Image
 
+To deploy this application using Docker, use the official Docker image available on [Docker Hub](https://hub.docker.com/repository/docker/hansat04/filesharing-service/general).
+
+#### Download the Image
+
+Use the following command to download the Docker image:
+
+`docker pull hansat04/filesharing-service`
+
+#### Start the Container
+
+To run the container, use this command:
+
+`docker run -d -p 8080:80 hansat04/filesharing-service`
+
+- `-d`: Runs the container in detached mode.
+- `-p 8080:80`: Maps port 80 in the container to port 8080 on your host machine.
+
+You can then access the application in your browser at `http://<ip>:8080`.
 ## Contributing
 
 Contributions are welcome! Feel free to submit pull requests to enhance functionality or improve the user experience.
