@@ -31,13 +31,13 @@ To deploy this application using Docker, use the official Docker image available
 
 Use the following command to download the Docker image:
 
-`docker pull hansat04/filesharing-service`
+`docker pull hansat04/filesharing-service:tag`
 
 #### Start the Container
 
 To run the container, use this command:
 
-`docker run -d -p 8080:80 hansat04/filesharing-service`
+`docker run -d -p 8080:80 hansat04/filesharing-service:tag`
 
 - `-d`: Runs the container in detached mode.
 - `-p 8080:80`: Maps port 80 in the container to port 8080 on your host machine.
