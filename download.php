@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Datei herunterladen</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -10,13 +9,12 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-
 <body>
     <div class="awasr">
         <?php
         ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
 
         // Funktion, um die Dateigröße zu formatieren
         function formatSizeUnits($bytes) {
@@ -26,6 +24,7 @@ error_reporting(E_ALL);
         }
 
         $downloadFilename = $_GET['filename'] ?? null;
+        $key = $_GET['key'] ?? null;
         $downloadPath = 'Files/' . $downloadFilename;
         $absolutePath = realpath($downloadPath);
         $currentDomain = $_SERVER['HTTP_HOST'];
@@ -35,16 +34,17 @@ error_reporting(E_ALL);
         $statusFile = 'Uploaded_Files/statusupload.csv';
 
         if (strpos($absolutePath, realpath('Files')) !== 0) {
-            // Pfad ist nicht im erwarteten Verzeichnis
             die("Unauthorized access");
         }
-// Dateiname aus der URL erhalten und das aktuelle Datum ermitteln
-$filename = basename($downloadFilename);
-$currentDate = date("Y-m-d");
-// Überprüfen, ob in der Datei /Uploaded_Files/statusupload.csv eine 1 steht
-$statusHandle = fopen($statusFile, 'r');
-$status = fgetcsv($statusHandle);
-fclose($statusHandle);
+
+        // Dateiname aus der URL erhalten und das aktuelle Datum ermitteln
+        $filename = basename($downloadFilename);
+        $currentDate = date("Y-m-d");
+
+        // Überprüfen, ob in der Datei /Uploaded_Files/statusupload.csv eine 1 steht
+        $statusHandle = fopen($statusFile, 'r');
+        $status = fgetcsv($statusHandle);
+        fclose($statusHandle);
 
         if ($status[0] == '1') {
             $maxRetries = 60;
@@ -96,15 +96,13 @@ fclose($statusHandle);
                     fclose($handle);
                 }
             } else {
-                // Fehlerbehandlung: konnte die Datei nicht sperren
                 echo "Fehler: Konnte die Datei nach $maxRetries Versuchen nicht sperren.";
             }
         } else {
             echo "Status ist nicht 1. Vorgang abgebrochen.";
         }
-        if ($downloadFilename) {
-            $downloadPath = 'Files/' . $downloadFilename;
 
+        if ($downloadFilename && $key) {
             if (file_exists($downloadPath)) {
                 // Check if the hash of the file matches any hash in the hashes.csv file
                 $hashValue = hash_file('sha256', $downloadPath);
@@ -114,6 +112,7 @@ fclose($statusHandle);
                     echo "Download of this file has been disabled.";
                     echo "<a class=\"buttona\" href=\"index.php\">HOME</a>";
                 } else {
+                    // Display file information and preview options
                     echo "<h1>Download File</h1>";
 
                     // Get file size
@@ -144,24 +143,24 @@ fclose($statusHandle);
                     // Check if it's an image file
                     $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                     $videoExtensions = ['mp4', 'webm', 'ogg', 'mov'];
-                    $audioExtensions = ['mp3', 'ogg', 'wav']; // Add audio extensions
+                    $audioExtensions = ['mp3', 'ogg', 'wav'];
 
                     if (in_array(strtolower($fileExtension), $imageExtensions)) {
-                        echo "<p>Preview of the file: <br/><img class='picture-preview' src='download_handler.php?filename=$downloadFilename' alt='File Preview' ></p>";
+                        echo "<p>Preview of the file: <br/><img class='picture-preview' src='download_handler.php?filename=$downloadFilename&key=$key' alt='File Preview' ></p>";
                     } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
                         echo "<p>Preview of the file:</p>";
                         echo "<div class='preview-container'>";
-                        echo "<video class='picture-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='download_handler.php?filename=$downloadFilename' type='video/mp4'></video>";
+                        echo "<video class='picture-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='download_handler.php?filename=$downloadFilename&key=$key' type='video/mp4'></video>";
                         echo "</div>";
                     } elseif (in_array(strtolower($fileExtension), $audioExtensions)) {
                         echo "<p>Preview of the file:</p>";
                         echo "<div class='preview-container'>";
-                        echo "<audio class='audio-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='download_handler.php?filename=$downloadFilename' type='audio/mpeg'></audio>";
+                        echo "<audio class='audio-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='download_handler.php?filename=$downloadFilename&key=$key' type='audio/mpeg'></audio>";
                         echo "</div>";
                     }
 
                     echo "<p class='preview-text'>Click on the following button to download the following file: <strong>$downloadFilename</strong></p>";
-                    echo "<a href='download_handler.php?filename=$downloadFilename'>";
+                    echo "<a href='download_handler.php?filename=$downloadFilename&key=$key'>";
                     echo "<button>Start the download</button>";
                     echo "</a>";
                     echo "<a class=\"buttona\" href=\"index.php\">HOME</a>";
@@ -171,12 +170,10 @@ fclose($statusHandle);
                 echo "<a class=\"buttona\" href=\"index.php\">HOME</a>";
             }
         } else {
-            echo "No file requested.";
+            echo "No file requested or no key provided.";
             echo "<a class=\"buttona\" href=\"index.php\">HOME</a>";
         }
-
         ?>
-
     </div>
     <footer class="footera">
         <?php include("templates/footer.php"); ?>
@@ -195,7 +192,5 @@ fclose($statusHandle);
             });
         }
     </script>
-
 </body>
-
 </html>

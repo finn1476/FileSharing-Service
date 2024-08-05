@@ -1,7 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 // Define default values if not set
 $csvFile = 'Speicher/hashes.csv'; // CSV file for hash values
@@ -9,6 +7,19 @@ $csvSettingsFile = 'Speicher/settings.csv'; // CSV file for storing settings
 $selectedFiletypesFile = 'Speicher/selected_filetypes.csv'; // CSV file for allowed file types
 $uploadDir = 'Files/'; // Define the upload directory
 $currentDomain = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''; // Define the current domain
+
+// Function to generate a random encryption key
+function generateEncryptionKey($length = 32) {
+    return bin2hex(random_bytes($length));
+}
+
+// Function to encrypt data
+function encryptFile($filePath, $key) {
+    $data = file_get_contents($filePath);
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+    $encryptedData = openssl_encrypt($data, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+    return base64_encode($iv . $encryptedData); // Combine IV and encrypted data
+}
 
 // Read settings from CSV file
 $settingsData = readSettingsFromCsv($csvSettingsFile);
@@ -30,10 +41,11 @@ function readSettingsFromCsv($csvFile) {
     }
     return $settingsData;
 }
+
 function generateRandomFileName($fileExt, $length = 16) {
-    $randomName = bin2hex(random_bytes($length)) . '.' . $fileExt;
-    return $randomName;
+    return bin2hex(random_bytes($length)) . '.' . $fileExt;
 }
+
 // Function to read selected file types from CSV file
 function readSelectedFileTypesFromCsv($csvFile) {
     $selectedFileTypesData = array();
@@ -42,11 +54,10 @@ function readSelectedFileTypesFromCsv($csvFile) {
             $selectedFileTypesData[] = $row;
         }
         fclose($handle);
-    } else {
-        echo "Error opening CSV file: $csvFile";
     }
     return $selectedFileTypesData;
 }
+
 // Function to add file name to CSV file with current date
 function addFileNameToCsv($csvFile, $fileName) {
     $date = date("Y-m-d"); // Get current date
@@ -65,15 +76,15 @@ function addFileNameToCsv($csvFile, $fileName) {
         $lockAttempts--;
         usleep(500000); // Sleep for 0.5 seconds between attempts
     }
-
-    echo "Failed to acquire lock on CSV file after 60 attempts."; // Lock acquisition failed after 60 attempts
 }
+
 // Function to write settings to CSV file
 function writeSettingsToCsv($csvFile, $settingsData) {
     $file = fopen($csvFile, 'w');
     fputcsv($file, $settingsData);
     fclose($file);
 }
+
 // Function to add file name and username to CSV file
 function addFileNameAndUsernameToCsv($csvFile, $fileName, $username) {
     $fileData = array($fileName, $username, date("Y-m-d H:i:s")); // Date added
@@ -81,6 +92,7 @@ function addFileNameAndUsernameToCsv($csvFile, $fileName, $username) {
     fputcsv($fileHandle, $fileData);
     fclose($fileHandle);
 }
+
 // Function to read hashes from CSV file
 function hashreadfromSCV($csvFile) {
     $settingsData = array();
@@ -89,8 +101,6 @@ function hashreadfromSCV($csvFile) {
             $settingsData[] = $row;
         }
         fclose($handle);
-    } else {
-        echo "Error opening CSV file: $csvFile";
     }
 
     return $settingsData;
@@ -110,13 +120,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
 
             // Check if the file extension is in the allowed list from CSV file
             if (in_array(strtolower($fileExt), $allowedExtensions)) {
-				$fileHash = hash_file('sha256', $tempName);
+                $fileHash = hash_file('sha256', $tempName);
+
                 // Generate a unique random file name
                 $randomName = uniqid() . uniqid() . uniqid() . $fileHash . uniqid() . uniqid() . uniqid() . generateRandomFileName($fileExt);
                 $destination = $uploadDir . $randomName;
-
-                // Calculate the hash value of the uploaded file
-
 
                 // Check if the hash value is present in the hashes.csv file
                 $hashesData = hashreadfromSCV($csvFile);
@@ -125,48 +133,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                 // Check if the hash value of the uploaded file is already in the CSV file
                 if (in_array($fileHash, $existingHashes)) {
                     // If the hash is found in the CSV, it means the file is disabled
-                    echo "File upload aborted. This file is disabled.";
-                    // You may want to delete the uploaded file in this case
                     unlink($tempName);
                     exit(); // Stop further execution
                 }
+
                 // Add the file name to uploaded_files.csv if statusupload.csv contains "1"
-$statusUploadFile = 'Uploaded_Files/statusupload.csv';
-if (($handle = fopen($statusUploadFile, 'r')) !== false) {
-    $status = fgetcsv($handle)[0]; // Read the first value
-    fclose($handle);
+                $statusUploadFile = 'Uploaded_Files/statusupload.csv';
+                if (($handle = fopen($statusUploadFile, 'r')) !== false) {
+                    $status = fgetcsv($handle)[0]; // Read the first value
+                    fclose($handle);
 
-    if ($status == 1) {
-        // Add the file name to uploaded_files.csv
-        $uploadedFilesCsv = 'Uploaded_Files/uploaded_files.csv';
-        addFileNameToCsv($uploadedFilesCsv, $randomName);
-    }
-} else {
-    echo "Error opening statusupload.csv.";
-}
-
-                // Move the uploaded file to the upload directory
-                if (move_uploaded_file($tempName, $destination)) {
-                        if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['username'])) {
-        // Füge den Dateinamen und den Benutzernamen zur CSV-Datei hinzu
-						addFileNameAndUsernameToCsv('Uploaded_Files/files.csv', $randomName, $_SESSION['username']);
-						}
-                    // Continue with the rest of the code
-                    $downloadLink = "/download.php?filename=$randomName";
-                    $downloadLink2 = "$currentDomain/download.php?filename=$randomName";
-
-                    echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
-                    echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
-                    echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
-                    echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
-                } else {
-                    echo "There was a problem uploading the file.";
+                    if ($status == 1) {
+                        // Add the file name to uploaded_files.csv
+                        $uploadedFilesCsv = 'Uploaded_Files/uploaded_files.csv';
+                        addFileNameToCsv($uploadedFilesCsv, $randomName);
+                    }
                 }
+
+                // Generate a random encryption key
+                $encryptionKey = generateEncryptionKey();
+
+                // Encrypt the file and save it
+                $encryptedData = encryptFile($tempName, $encryptionKey);
+
+                // Save the encrypted data to the destination file
+                file_put_contents($destination, $encryptedData);
+
+                // Remove the original file
+                unlink($tempName);
+
+                if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['username'])) {
+                    // Add the file name and username to the CSV file
+                    addFileNameAndUsernameToCsv('Uploaded_Files/files.csv', $randomName, $_SESSION['username']);
+                }
+
+                // Provide download link
+                $downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+                $downloadLink2 = "$currentDomain/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+
+                echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
+                echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
+                echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
+                echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
             } else {
                 echo "Invalid file format. Allowed formats: " . implode(", ", $allowedExtensions);
             }
         } else {
-            echo "The file is too large. Please select a file that is not larger than " . ($maximumFileSize / 1048576) . " MB is.";
+            echo "The file is too large. Please select a file that is not larger than " . ($maximumFileSize / 1048576) . " MB.";
         }
     } else {
         echo "Error while uploading the file: " . $file["error"];

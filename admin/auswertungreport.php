@@ -3,34 +3,20 @@
 error_reporting(0);
 ini_set('display_errors', 0);
 
-// Define default values if not set
-$currentDomain = $_SERVER['HTTP_HOST'];
+// Include database configuration
+include 'config.php';
 
-function getReports($csvFile) {
-    // If the file does not exist, return an empty array
-    if (!file_exists($csvFile)) {
-        return [];
-    }
-
-    // Read CSV file and parse entries
-    $csvData = file_get_contents($csvFile);
-    $lines = explode(PHP_EOL, $csvData);
+function getReports($pdo) {
     $reports = [];
 
-    foreach ($lines as $line) {
-        $data = explode(',', $line);
+    // SQL query to fetch all reports including new fields
+    $sql = 'SELECT id, case_number, email, filename, description, reason, passwords, created_at FROM reports ORDER BY id DESC';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Create an associative array with meaningful keys
-        $report = [
-            'id' => isset($data[0]) ? intval($data[0]) : null,
-            'case_number' => isset($data[1]) ? $data[1] : null,
-            'email' => isset($data[2]) ? $data[2] : null,
-            'filename' => isset($data[3]) ? $data[3] : null,
-            'description' => isset($data[4]) ? $data[4] : null,
-            'reason' => isset($data[5]) ? $data[5] : null,
-        ];
-
-        $reports[] = $report;
+    foreach ($rows as $row) {
+        $reports[] = $row;
     }
 
     return $reports;
@@ -38,8 +24,6 @@ function getReports($csvFile) {
 
 function isFileDisabled($filename) {
     // Implement logic to check if the file is disabled
-    // You may use the $filename to check if the file is disabled
-    // Add your logic here
     $hashValue = hash_file('sha256', '../Files/' . $filename);
     $csvFile = '../speicher/hashes.csv';
 
@@ -99,7 +83,7 @@ if (isset($_POST['file_select'])) {
             <div class="maske"><img src="../bilder/vendetta-g41f352c32_1280-modified.png" alt="Guy Fawkes Mask" class="pictureguy"/></div>
             <h1>Admin Panel</h1>
 
-            <style>
+             <style>
                 table {
                     border-collapse: collapse;
                     margin: 20px;
@@ -107,7 +91,8 @@ if (isset($_POST['file_select'])) {
 
                 th, td {
                     border: 1px solid #ddd;
-                    padding: 1rem;
+                    padding: 0.5rem; /* Adjust padding */
+                    font-size: 0.8rem; /* Adjust font size */
                     text-align: left;
                 }
 
@@ -129,34 +114,26 @@ if (isset($_POST['file_select'])) {
                     border-color: green;
                     padding: 1.5rem;
                 }
-                .greeen{
+
+                .greeen {
                     border: 1px solid #ddd;
                     background-color: green;
                 }
 
                 .orange {
                     background-color: orange;
-                     padding: 1.5rem;
+                    padding: 1.5rem;
                 }
 
                 .black {
                     background-color: black;
                 }
-                .blue{
+
+                .blue {
                     background-color: blue;
-                     padding: 1.5rem;
+                    padding: 1.5rem;
                 }
             </style>
-
-            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <label for="file_select">Wählen Sie eine Datei aus:</label>
-                <select id="file_select" name="file_select">
-                    <?php foreach ($reportFiles as $file): ?>
-                        <option value="<?php echo $file; ?>" <?php if ($file === $selectedFile) echo 'selected'; ?>><?php echo basename($file); ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="submit">Datei auswählen</button>
-            </form>
 
             <table>
                 <tr>
@@ -166,11 +143,13 @@ if (isset($_POST['file_select'])) {
                     <th>File Name</th>
                     <th>Description</th>
                     <th>Reason</th>
+                    <th>Passwords</th>
+                    <th>Created At</th>
                     <th>Action</th>
                 </tr>
                 <?php
-                // Read selected CSV file and display entries in a table
-                $reports = getReports($selectedFile);
+                // Read data from the database and display entries in a table
+                $reports = getReports($pdo);
                 $userCsvFile = '../Uploaded_Files/files.csv'; // This CSV contains the filename and username
 
                 foreach ($reports as $report) {
@@ -187,12 +166,14 @@ if (isset($_POST['file_select'])) {
                         echo "<td>{$report['filename']}</td>";
                         echo "<td>{$report['description']}</td>";
                         echo "<td>{$report['reason']}</td>";
+                        echo "<td>{$report['passwords']}</td>";
+                        echo "<td>{$report['created_at']}</td>";
                         echo "<td class='" . ($fileDisabled ? 'greeen' : ($fileFound ? 'orange' : 'black')) . "'>";
                         if ($isUserFile) {
                             echo "<input type='checkbox' onclick=\"viewUserData('{$report['filename']}')\"> Nutzerinformationen ansehen";
                         }
                         echo "<button class='red' onclick=\"deleteEntry('{$report['id']}')\">Delete</button>";
-                        echo "<button class='green' onclick=\"manageFile('{$report['filename']}')\">Manage File</button>";
+                        echo "<button class='green' onclick=\"manageFile('{$report['filename']}', '{$report['passwords']}')\">Manage File</button>";
                         echo "<button class='orange' onclick=\"sendMailA('{$report['email']}', '{$report['filename']}', '{$report['case_number']}', '{$report['id']}')\">Mail Accept</button>";
                         echo "<button class='blue' onclick=\"sendMailB('{$report['email']}', '{$report['filename']}', '{$report['case_number']}', '{$report['id']}')\">Mail Deny</button>";
                         echo "</td>";
@@ -204,70 +185,74 @@ if (isset($_POST['file_select'])) {
 
             <p><a class="buttona" href="adminpanel3.php">Zurück</a>
             <a class="buttona" href="../index.php">HOME</a></p>
-            <a class="buttona" href="auswertung.php">Auswertung</a>
         </div>
     </main>
 
     <script>
-        function deleteEntry(id) {
-            var confirmDelete = confirm("Are you sure you want to delete this entry?");
-            if (confirmDelete) {
-                // Send a request to delete the entry
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        // Reload the page after successful deletion
-                        location.reload();
-                    }
-                };
-                xhttp.open("GET", "delete_entry.php?id=" + id, true);
-                xhttp.send();
+function deleteEntry(id) {
+    var confirmDelete = confirm("Are you sure you want to delete this entry?");
+    if (confirmDelete) {
+        // Send a request to delete the entry
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Reload the page after successful deletion
+                location.reload();
             }
-        }
+        };
+        xhttp.open("GET", "delete_entry.php?id=" + id, true);
+        xhttp.send();
+    }
+}
 
-        function manageFile(filename) {
-            var form = document.createElement("form");
-            form.method = "POST";
-            form.action = "admindeletedesision.php";
+function manageFile(filename, password) {
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = "admindeletedesision.php";
 
-            var input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "filename";
-            input.value = filename;
+    var filenameInput = document.createElement("input");
+    filenameInput.type = "hidden";
+    filenameInput.name = "filename";
+    filenameInput.value = filename;
+    form.appendChild(filenameInput);
 
-            form.appendChild(input);
-            document.body.appendChild(form);
+    var passwordInput = document.createElement("input");
+    passwordInput.type = "hidden";
+    passwordInput.name = "password";
+    passwordInput.value = password;
+    form.appendChild(passwordInput);
 
-            form.submit();
-        }
+    document.body.appendChild(form);
+    form.submit();
+}
 
-        function viewUserData(filename) {
-            var form = document.createElement("form");
-            form.method = "POST";
-            form.action = "view_userdata.php";
+function viewUserData(filename) {
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = "view_userdata.php";
 
-            var input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "filename";
-            input.value = filename;
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "filename";
+    input.value = filename;
 
-            form.appendChild(input);
-            document.body.appendChild(form);
+    form.appendChild(input);
+    document.body.appendChild(form);
 
-            form.submit();
-        }
+    form.submit();
+}
 
-        function sendMailA(email, filename, caseNumber, id) {
-            var subject = "Delete Request #" + caseNumber + " ID #" + id;
-            var body = "Dear Sir/Madam,\n\n Please be advised that your delete request has been deemed valid for the file: " + filename + "\n\nBest regards,\nAdmin Team";
-            window.location.href = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-        }
+function sendMailA(email, filename, caseNumber, id) {
+    var subject = "Delete Request #" + caseNumber + " ID #" + id;
+    var body = "Dear Sir/Madam,\n\n Please be advised that your delete request has been deemed valid for the file: " + filename + "\n\nBest regards,\nAdmin Team";
+    window.location.href = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+}
 
-        function sendMailB(email, filename, caseNumber, id) {
-            var subject = "Delete Request #" + caseNumber + " ID #" + id;
-            var body = "Dear Sir/Madam,\n\n Please be advised that your delete request has been deemed invalid for the file: " + filename + "\n\nBest regards,\nAdmin Team";
-            window.location.href = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-        }
+function sendMailB(email, filename, caseNumber, id) {
+    var subject = "Delete Request #" + caseNumber + " ID #" + id;
+    var body = "Dear Sir/Madam,\n\n Please be advised that your delete request has been deemed invalid for the file: " + filename + "\n\nBest regards,\nAdmin Team";
+    window.location.href = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+}
     </script>
 
 </body>

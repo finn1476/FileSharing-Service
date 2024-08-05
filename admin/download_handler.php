@@ -34,13 +34,11 @@ function decryptFile($data, $key) {
 // Check if a filename parameter is provided
 if (isset($_GET['filename'])) {
     $filename = basename($_GET['filename']); // Get the file name from URL parameter
-    $filePath = 'Files/' . $filename; // Path to the encrypted file
-    $csvFileHashes = 'Speicher/hashes.csv'; // CSV file for storing hashes
-    $disabledFiles = file('disabled_files.txt', FILE_IGNORE_NEW_LINES); // List of disabled files
+    $filePath = '../Files/' . $filename; // Path to the encrypted file
 
     // Check if the file exists
     if (file_exists($filePath)) {
-        // Read the encrypted file content
+        // Decrypt the file content
         $encryptedData = file_get_contents($filePath);
 
         // Debug output
@@ -48,19 +46,10 @@ if (isset($_GET['filename'])) {
             die("Failed to read the file.");
         }
 
-        // Decrypt the file content
         $decryptedData = decryptFile($encryptedData, $key);
 
         if ($decryptedData === false) {
             die("Decryption failed. The file could not be decrypted.");
-        }
-
-        // Verify the hash of the decrypted file content
-        $hashValue = hash('sha256', $decryptedData);
-        $csvDataHashes = file_get_contents($csvFileHashes);
-
-        if (strpos($csvDataHashes, $hashValue) !== false || in_array($filename, $disabledFiles)) {
-            die("Download of this file has been disabled.");
         }
 
         // Set the appropriate headers for file download

@@ -1,29 +1,29 @@
 <?php
+// Turn off error reporting
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// Include the database configuration file
+include 'config.php';
+
 if (isset($_GET['id'])) {
-    $idToDelete = $_GET['id'];
+    $idToDelete = intval($_GET['id']); // Ensure the ID is an integer
 
-    $csvFile = '../sicherspeicher/reports.csv';
+    // Prepare SQL DELETE statement
+    $sql = 'DELETE FROM reports WHERE id = :id';
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':id', $idToDelete, PDO::PARAM_INT);
 
-    // Read existing data from the CSV file
-    $lines = file($csvFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-    // Remove the entry with the specified ID
-    $updatedData = '';
-    foreach ($lines as $line) {
-        $data = explode(',', $line);
-        $currentId = $data[0];
-
-        if ($currentId == $idToDelete) {
-            // Keep the ID and Case Number fields, only remove other fields
-            $updatedData .= $data[0] . ',' . $data[1] . PHP_EOL;
-        } else {
-            // Preserve the existing line for entries with different IDs
-            $updatedData .= $line . PHP_EOL;
-        }
+    if ($stmt->execute()) {
+        // Optional: Print a success message for debugging
+        // echo 'Entry deleted successfully.';
+    } else {
+        // Optional: Print an error message for debugging
+        // echo 'Error deleting entry.';
     }
-
-    // Save the updated data back to the CSV file
-    file_put_contents($csvFile, $updatedData, LOCK_EX);
+} else {
+    // Optional: Print an error message for debugging
+    // echo 'No ID provided.';
 }
 
 // Redirect back to the admin panel
