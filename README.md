@@ -15,7 +15,6 @@ This web application allows users to quickly and easily upload files. The applic
 - **Reporting**: Users can report files that violate terms of service or infringe on intellectual property rights.
 - **Reporting Management**: Administrators can review reported files and take appropriate action.
 - **User Accounts**: Users can create accounts to manage their uploaded files and access additional features.
-- **Stor**: Files are Stored encrypted on the Server.
 - **Encryption**: Files are Stored encrypted on the Server.
 - **Paid Storage Upgrade**: Users can pay for additional storage space if they exceed the default storage limit.
 
