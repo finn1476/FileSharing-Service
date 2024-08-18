@@ -28,6 +28,14 @@ This web application allows users to quickly and easily upload files. The applic
 
 To deploy this application using Docker, use the official Docker image available on [Docker Hub](https://hub.docker.com/repository/docker/hansat04/filesharing-service/general).
 
+### Persistent Data
+
+Map the following volumes to ensure persistent data:
+
+- `/var/www/html/Files`
+- `/var/www/html/Speicher`
+- `/var/www/html/Uploaded_Files`
+- `/var/www/html/admin`
 #### Download the Image
 
 Use the following command to download the Docker image:
