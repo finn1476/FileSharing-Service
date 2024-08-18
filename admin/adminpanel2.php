@@ -113,19 +113,7 @@ fclose($fiasdle);
             <h1>Admin Panel</h1>
 
             <!-- Add a form to set maximum file size, allowed file types, and a checkbox -->
-            <form action="admin.php" method="post">
-                <label for="maxFileSize">Max File Size (in MB):</label><br>
-                <input type="number" id="maxFileSize" name="maxFileSize" value="<?php echo $settingsFromFile['maximumFileSize'] / 1048576; ?>"><br>
-
-                <!-- Display current settings -->
-                <p>Current Maximum File Size: <?php echo $settingsFromFile['maximumFileSize'] / 1048576; ?> MB</p>
-
-                <!-- Add checkbox for status -->
-                
-
-                
-                <input type="submit" name="updateSettings" value="Update Settings">
-            </form>
+            
 			<p>
 			<form  action="adminpanel2.php" method="POST" name="">
 			<label>Maximale Größe von /Files</label><br>

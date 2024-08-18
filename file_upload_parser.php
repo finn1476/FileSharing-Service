@@ -1,12 +1,19 @@
 <?php
 session_start();
+require 'config.php';
 
 // Define default values if not set
 $csvFile = 'Speicher/hashes.csv'; // CSV file for hash values
 $csvSettingsFile = 'Speicher/settings.csv'; // CSV file for storing settings
 $selectedFiletypesFile = 'Speicher/selected_filetypes.csv'; // CSV file for allowed file types
+$tempUploadDir = 'TempFiles/'; // Temporary upload directory
 $uploadDir = 'Files/'; // Define the upload directory
 $currentDomain = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''; // Define the current domain
+
+// Ensure temp upload directory exists
+if (!is_dir($tempUploadDir)) {
+    mkdir($tempUploadDir, 0755, true);
+}
 
 // Function to generate a random encryption key
 function generateEncryptionKey($length = 32) {
@@ -14,39 +21,29 @@ function generateEncryptionKey($length = 32) {
 }
 
 // Function to encrypt data
-function encryptFile($filePath, $key) {
-    $data = file_get_contents($filePath);
+function encryptData($data, $key) {
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
     $encryptedData = openssl_encrypt($data, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
     return base64_encode($iv . $encryptedData); // Combine IV and encrypted data
 }
 
 // Read settings from CSV file
-$settingsData = readSettingsFromCsv($csvSettingsFile);
-$maximumFileSize = $settingsData['maximumFileSize'] ?? 5242880; // 5 MB (in Bytes)
-
-// Read allowed file types from CSV file
-$selectedFiletypesData = readSelectedFileTypesFromCsv($selectedFiletypesFile);
-$allowedExtensions = isset($selectedFiletypesData[0]) ? $selectedFiletypesData[0] : array();
-
-// Function to read settings from CSV file
 function readSettingsFromCsv($csvFile) {
     $settingsData = array();
     if (($handle = fopen($csvFile, 'r')) !== false) {
         $row = fgetcsv($handle);
         if (!empty($row)) {
-            $settingsData['maximumFileSize'] = $row[0] ?? 5242880; // Default: 5 MB (in Bytes)
+            $settingsData['maximumFileSize'] = isset($row[0]) ? intval($row[0]) * 1048576 : 5242880; // Convert MB to Bytes (default: 5 MB)
         }
         fclose($handle);
     }
     return $settingsData;
 }
 
-function generateRandomFileName($fileExt, $length = 16) {
-    return bin2hex(random_bytes($length)) . '.' . $fileExt;
-}
+$settingsData = readSettingsFromCsv($csvSettingsFile);
+$maximumFileSize = $settingsData['maximumFileSize'] ?? 5242880; // 5 MB (in Bytes)
 
-// Function to read selected file types from CSV file
+// Read allowed file types from CSV file
 function readSelectedFileTypesFromCsv($csvFile) {
     $selectedFileTypesData = array();
     if (($handle = fopen($csvFile, 'r')) !== false) {
@@ -58,6 +55,19 @@ function readSelectedFileTypesFromCsv($csvFile) {
     return $selectedFileTypesData;
 }
 
+$selectedFiletypesData = readSelectedFileTypesFromCsv($selectedFiletypesFile);
+$allowedExtensions = isset($selectedFiletypesData[0]) ? $selectedFiletypesData[0] : array();
+
+function generateRandomFileName($fileExt, $length = 16) {
+    return bin2hex(random_bytes($length)) . '.' . $fileExt;
+}
+// Function to get the file upload limit from the database
+function getFileUploadLimitFromDb($pdo) {
+    $sql = "SELECT upload_limit_file FROM file_upload_limits WHERE id = 1"; // Assuming 1 is the ID for the limit
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchColumn() * 1048576; // Convert MB to Bytes
+}
 // Function to add file name to CSV file with current date
 function addFileNameToCsv($csvFile, $fileName) {
     $date = date("Y-m-d"); // Get current date
@@ -78,19 +88,23 @@ function addFileNameToCsv($csvFile, $fileName) {
     }
 }
 
-// Function to write settings to CSV file
-function writeSettingsToCsv($csvFile, $settingsData) {
-    $file = fopen($csvFile, 'w');
-    fputcsv($file, $settingsData);
-    fclose($file);
-}
-
-// Function to add file name and username to CSV file
+// Function to add file name and username to another CSV file
 function addFileNameAndUsernameToCsv($csvFile, $fileName, $username) {
-    $fileData = array($fileName, $username, date("Y-m-d H:i:s")); // Date added
-    $fileHandle = fopen($csvFile, 'a');
-    fputcsv($fileHandle, $fileData);
-    fclose($fileHandle);
+    $fileData = array($fileName, $username);
+
+    // Attempt to acquire a lock on the CSV file with 60 tries
+    $lockAttempts = 60;
+    while ($lockAttempts > 0) {
+        $fileHandle = fopen($csvFile, 'a'); // Open CSV file in append mode
+        if (flock($fileHandle, LOCK_EX)) { // Exclusive lock
+            fputcsv($fileHandle, $fileData); // Write data to CSV
+            flock($fileHandle, LOCK_UN); // Release the lock
+            fclose($fileHandle); // Close CSV file
+            return; // Exit the function
+        }
+        $lockAttempts--;
+        usleep(500000); // Sleep for 0.5 seconds between attempts
+    }
 }
 
 // Function to read hashes from CSV file
@@ -106,24 +120,125 @@ function hashreadfromSCV($csvFile) {
     return $settingsData;
 }
 
+// Function to update the total upload size for a user
+function updateUserUploadSize($pdo, $userId, $fileSize) {
+    // Begin a transaction
+    $pdo->beginTransaction();
+    
+    try {
+        // Check if user already has an entry
+        $sql = "SELECT SUM(file_size) AS total_size FROM uploads WHERE user_id = :user_id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':user_id' => $userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $totalSize = $result['total_size'] ?? 0;
+
+        // Add the new file size to the total
+        $newSize = $totalSize + $fileSize;
+
+        // Check if the new size exceeds the user's upload limit
+        $sql = "SELECT upload_limit FROM file_upload_limits 
+                JOIN users ON users.file_upload_limit_id = file_upload_limits.id 
+                WHERE users.id = :user_id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':user_id' => $userId]);
+        $uploadLimitMB = $stmt->fetchColumn();
+
+        // Convert MB to Bytes
+        $uploadLimit = $uploadLimitMB * 1048576;
+
+        if ($uploadLimit !== false && $newSize > $uploadLimit) {
+            // Log the error
+            error_log("Exception: Upload exceeds the user's storage limit.");
+            
+            throw new Exception("Storage limit exceeded.");
+        }
+
+        // Insert the new file entry
+        $sql = "INSERT INTO uploads (user_id, file_size) VALUES (:user_id, :file_size)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':user_id' => $userId,
+            ':file_size' => $fileSize
+        ]);
+
+        $pdo->commit();
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        // Log the exception message
+        error_log("Exception: " . $e->getMessage());
+        throw $e;
+    }
+}
+
+// Function to get the file upload limit for a specific user from the database
+function getUserUploadLimit($pdo, $userId) {
+    $sql = "SELECT upload_limit_file 
+            FROM file_upload_limits 
+            JOIN users ON users.file_upload_limit_id = file_upload_limits.id 
+            WHERE users.id = :user_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':user_id' => $userId]);
+    $uploadLimitMB = $stmt->fetchColumn();
+    return $uploadLimitMB ? $uploadLimitMB * 1048576 : 0; // Convert MB to Bytes, return 0 if no limit found
+}
+// Get the upload limit for non-logged-in users (ID 1)
+function getAnonymousUploadLimit($pdo) {
+    $sql = "SELECT upload_limit FROM file_upload_limits WHERE id = 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchColumn() * 1048576; // Convert MB to Bytes
+}
+
 // Check for file upload errors
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
     $file = $_FILES["file1"];
 
     // Check for file upload errors
     if ($file["error"] === UPLOAD_ERR_OK) {
+		  global $pdo;
+		   // Initialize upload limit
+        $uploadLimit = 0;
+ // Check if the user is logged in
+        if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['username'])) {
+            // Get the user's ID from the session
+            $username = $_SESSION['username'];
+            $sql = "SELECT id FROM users WHERE username = :username";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':username' => $username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                $userId = $user['id'];
+
+                // Get the user's upload limit
+                $uploadLimit = getUserUploadLimit($pdo, $userId);
+            } else {
+                echo "User not found.";
+                exit();
+            }
+        } else {
+            // Handle case for non-logged in users
+            // This section can be customized based on your anonymous upload limits setup
+            $uploadLimit = getAnonymousUploadLimit($pdo);
+        }
+		if ($file["size"] > $uploadLimit) {
+            echo "The file is too large. Please select a file that is not larger than " . ($uploadLimit / 1048576) . " MB.";
+            exit();
+        }
+
         // Check file size using the updated $maximumFileSize
         if ($file["size"] <= $maximumFileSize) {
-            $tempName = $file["tmp_name"];
-            $originalName = $file["name"];
-            $fileExt = pathinfo($originalName, PATHINFO_EXTENSION);
+            $fileName = $file["name"];
+            $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+            $fileData = file_get_contents($file["tmp_name"]);
+            $fileHash = hash('sha256', $fileData);
 
             // Check if the file extension is in the allowed list from CSV file
             if (in_array(strtolower($fileExt), $allowedExtensions)) {
-                $fileHash = hash_file('sha256', $tempName);
-
                 // Generate a unique random file name
-                $randomName = uniqid() . uniqid() . uniqid() . $fileHash . uniqid() . uniqid() . uniqid() . generateRandomFileName($fileExt);
+                $randomName = generateRandomFileName($fileExt);
+                $tempDestination = $tempUploadDir . $randomName;
                 $destination = $uploadDir . $randomName;
 
                 // Check if the hash value is present in the hashes.csv file
@@ -133,48 +248,134 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                 // Check if the hash value of the uploaded file is already in the CSV file
                 if (in_array($fileHash, $existingHashes)) {
                     // If the hash is found in the CSV, it means the file is disabled
-                    unlink($tempName);
+                    echo "File is disabled.";
                     exit(); // Stop further execution
                 }
 
-                // Add the file name to uploaded_files.csv if statusupload.csv contains "1"
-                $statusUploadFile = 'Uploaded_Files/statusupload.csv';
-                if (($handle = fopen($statusUploadFile, 'r')) !== false) {
-                    $status = fgetcsv($handle)[0]; // Read the first value
-                    fclose($handle);
+                // Perform user storage limit check before any file operation
+                if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['username'])) {
+                    try {
+                        // Datenbankverbindung (aus config.php)
+                        global $pdo;
 
-                    if ($status == 1) {
-                        // Add the file name to uploaded_files.csv
-                        $uploadedFilesCsv = 'Uploaded_Files/uploaded_files.csv';
-                        addFileNameToCsv($uploadedFilesCsv, $randomName);
+                        // Benutzername von der Session holen
+                        $username = $_SESSION['username'];
+
+                        // Benutzer-ID abrufen
+                        $sql = "SELECT id FROM users WHERE username = :username";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute([':username' => $username]);
+                        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($user) {
+                            $userId = $user['id'];
+
+                            // Generate a random encryption key
+                            $encryptionKey = generateEncryptionKey();
+
+                            // Encrypt the file data
+                            $encryptedData = encryptData($fileData, $encryptionKey);
+
+                            // Save the encrypted data to the temporary destination file
+                            file_put_contents($tempDestination, $encryptedData);
+
+                            // Get the size of the encrypted file
+                            $encryptedFileSize = filesize($tempDestination);
+
+                            // Update user upload size with the size of the encrypted file
+                            try {
+                                updateUserUploadSize($pdo, $userId, $encryptedFileSize);
+                                
+                                // Move the file to the final destination
+                                rename($tempDestination, $destination);
+
+                                // Add the file name to uploaded_files.csv if statusupload.csv contains "1"
+                                $statusUploadFile = 'Uploaded_Files/statusupload.csv';
+                                if (($handle = fopen($statusUploadFile, 'r')) !== false) {
+                                    $status = fgetcsv($handle)[0]; // Read the first value
+                                    fclose($handle);
+										$filesCsv = 'Uploaded_Files/files.csv';
+                                        addFileNameAndUsernameToCsv($filesCsv, $randomName, $username);
+                                    if ($status == 1) {
+                                        // Add the file name to uploaded_files.csv
+                                        $uploadedFilesCsv = 'Uploaded_Files/uploaded_files.csv';
+                                        addFileNameToCsv($uploadedFilesCsv, $randomName);
+
+                                        // Add the file name and username to files.csv
+                                        
+                                    }
+                                }
+
+                                // Provide download link
+                                $downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+                                $downloadLink2 = "$currentDomain/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+
+                                echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
+                                echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
+                                echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
+                                echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
+                            } catch (Exception $e) {
+                                // Remove the temp file if something went wrong
+                                if (file_exists($tempDestination)) {
+                                    unlink($tempDestination);
+                                }
+                                // Provide a user-friendly message in English
+                                echo "Your storage limit has been exceeded. Please free up some space or buy some more.";
+                                exit();
+                            }
+                        } else {
+                            echo "User not found.";
+                        }
+                    } catch (PDOException $e) {
+                        echo 'Database error: ' . $e->getMessage();
+                    }
+                } else {
+                    // No active session, use the anonymous upload limit
+                    global $pdo;
+                    $anonymousUploadLimit = getAnonymousUploadLimit($pdo);
+
+                    // Check if the file size exceeds the anonymous upload limit
+                    if ($file["size"] <= $anonymousUploadLimit) {
+                        // Generate a random encryption key
+                        $encryptionKey = generateEncryptionKey();
+
+                        // Encrypt the file data
+                        $encryptedData = encryptData($fileData, $encryptionKey);
+
+                        // Save the encrypted data to the temporary destination file
+                        file_put_contents($tempDestination, $encryptedData);
+
+                        // Get the size of the encrypted file
+                        $encryptedFileSize = filesize($tempDestination);
+
+                        // Move the file to the final destination
+                        rename($tempDestination, $destination);
+
+                        // Add the file name to uploaded_files.csv if statusupload.csv contains "1"
+                        $statusUploadFile = 'Uploaded_Files/statusupload.csv';
+                        if (($handle = fopen($statusUploadFile, 'r')) !== false) {
+                            $status = fgetcsv($handle)[0]; // Read the first value
+                            fclose($handle);
+
+                            if ($status == 1) {
+                                // Add the file name to uploaded_files.csv
+                                $uploadedFilesCsv = 'Uploaded_Files/uploaded_files.csv';
+                                addFileNameToCsv($uploadedFilesCsv, $randomName);
+                            }
+                        }
+
+                        // Provide download link
+                        $downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+                        $downloadLink2 = "$currentDomain/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+
+                        echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
+                        echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
+                        echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
+                        echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
+                    } else {
+                        echo "The file is too large. Please select a file that is not larger than " . ($anonymousUploadLimit / 1048576) . " MB.";
                     }
                 }
-
-                // Generate a random encryption key
-                $encryptionKey = generateEncryptionKey();
-
-                // Encrypt the file and save it
-                $encryptedData = encryptFile($tempName, $encryptionKey);
-
-                // Save the encrypted data to the destination file
-                file_put_contents($destination, $encryptedData);
-
-                // Remove the original file
-                unlink($tempName);
-
-                if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['username'])) {
-                    // Add the file name and username to the CSV file
-                    addFileNameAndUsernameToCsv('Uploaded_Files/files.csv', $randomName, $_SESSION['username']);
-                }
-
-                // Provide download link
-                $downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
-                $downloadLink2 = "$currentDomain/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
-
-                echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
-                echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
-                echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
-                echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
             } else {
                 echo "Invalid file format. Allowed formats: " . implode(", ", $allowedExtensions);
             }

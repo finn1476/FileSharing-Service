@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -105,7 +108,7 @@
     <div class="container">
         <?php
 		error_reporting(0);
-        session_start();
+        
 
         if (!isset($_SESSION['username'])) {
             header("Location: index.html");
@@ -165,7 +168,7 @@
             foreach ($files as $file) : ?>
                 <tr>
                     <td><?php echo $file; ?></td>
-                    <td><a class="download" href="../download.php?filename=<?php echo urlencode($file); ?>" target="_blank">Download</a></td>
+                    <td><a class="download" href="../download.php?filename=<?php echo urlencode($file); ?>&key=" target="_blank">Download</a></td>
                     <td>
                         <?php if ($file !== 'delete.php') : ?>
                             <button class="delete-button" data-filename="<?php echo $file; ?>" data-action="delete-file">Delete</button>
@@ -181,6 +184,7 @@
                 <input type="hidden" name="delete_account" value="true">
                 <input type="hidden" name="username" value="<?php echo $_SESSION['username']; ?>">
                 <button class="delete-button delete-account-btn" type="button" data-action="delete-account">Delete account</button>
+				<a href="statistic.php">Statistics</a>
             </form>
         </div>
     </div>

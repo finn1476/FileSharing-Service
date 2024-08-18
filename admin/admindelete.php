@@ -21,7 +21,8 @@ $currentDomain = $_SERVER['HTTP_HOST'];
 
     <form action="admindeletedesision.php" method="post">
                 <label for="filenameInput">Enter Filename:</label>
-                <input type="text" id="filenameInput" name="filename" required>
+                <input type="text" id="filenameInput" name="filename" required>Key:
+				<input type="text" id="filenameInput" name="password" required>
                 <button type="submit" name="preview">Generate Preview</button>
             </form>
 	<form  action="listdeactivefiles.php" method="POST" name="">

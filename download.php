@@ -99,9 +99,9 @@
                 echo "Fehler: Konnte die Datei nach $maxRetries Versuchen nicht sperren.";
             }
         } else {
-            echo "Status ist nicht 1. Vorgang abgebrochen.";
-        }
 
+        }
+		
         if ($downloadFilename && $key) {
             if (file_exists($downloadPath)) {
                 // Check if the hash of the file matches any hash in the hashes.csv file
@@ -123,21 +123,36 @@
                     // Check if it's a ZIP file
                     $fileExtension = pathinfo($downloadFilename, PATHINFO_EXTENSION);
                     if (strtolower($fileExtension) === 'zip') {
-                        $zip = new ZipArchive;
-                        if ($zip->open($downloadPath) === TRUE) {
-                            echo "<h2>Contents of the ZIP file:</h2>";
-                            echo "<ul>";
-                            $maxEntriesToShow = 15;
-                            for ($i = 0; $i < min($zip->numFiles, $maxEntriesToShow); $i++) {
-                                $filename = $zip->getNameIndex($i);
-                                echo "<li>$filename</li>";
-                            }
-                            echo "</ul>";
+$decryptedTempFile = 'Files/temp_' . $downloadFilename;
 
-                            $zip->close();
-                        } else {
-                            echo "Unable to open the ZIP file.";
-                        }
+// Retrieve the decrypted ZIP file content using download_handler.php
+$decryptedContent = file_get_contents("http://127.0.0.1/download_handler.php?filename=$downloadFilename&key=$key");
+
+if ($decryptedContent === false) {
+    echo "Failed to retrieve decrypted content.";
+} else {
+    // Save the decrypted content to a temporary file
+    file_put_contents($decryptedTempFile, $decryptedContent);
+
+    $zip = new ZipArchive;
+    if ($zip->open($decryptedTempFile) === TRUE) {
+        echo "<h2>Contents of the ZIP file:</h2>";
+        echo "<ul>";
+        $maxEntriesToShow = 15;
+        for ($i = 0; $i < min($zip->numFiles, $maxEntriesToShow); $i++) {
+            $filename = $zip->getNameIndex($i);
+            echo "<li>$filename</li>";
+        }
+        echo "</ul>";
+        $zip->close();
+    } else {
+        echo "Unable to open the ZIP file. Error code: " . $zip->open($decryptedTempFile);
+    }
+
+    // Clean up: remove the temporary decrypted file after processing
+    unlink($decryptedTempFile);
+}
+
                     }
 
                     // Check if it's an image file

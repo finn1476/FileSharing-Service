@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -115,7 +116,7 @@ function formatBytes($bytes, $precision = 2) {
 <progress id="progressBar" value="0" max="100" style="width: 300px;"></progress>
 <?php
 	$datei = fopen("Speicher/filesgrosse.csv","r");
-	$maxsize = fgets($datei, 10);
+	$maxsize = fgets($datei, 1000000000);
 	fclose($datei);
 	if ($totalSize < $maxsize)
 	{

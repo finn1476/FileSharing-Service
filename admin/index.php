@@ -46,13 +46,6 @@
     <div class="maske"><img src="../bilder/vendetta-g41f352c32_1280-modified.png" alt="Guy Fawkes Mask" class="pictureguy"/></div>
     <h1>Admin Panel</h1>
     <form action="admin.php" method="post" enctype="multipart/form-data">
-        <label for="filename">Dateiname:</label><br>
-        <input type="text" id="filename" name="filename"><br>
-        <input type="submit" name="disable" value="Download deaktivieren">
-        <input type="submit" name="enable" value="Download aktivieren">
-        <input type="submit" name="delete" value="Datei löschen">
-    </form><br><br><p>
-    <form action="admin.php" method="post" enctype="multipart/form-data">
         <label for="csvFile">CSV Block Datei hochladen:</label><br>
         <input type="file" name="csvFile" id="csvFile" accept=".csv" >
         <input type="submit" name="updateFromCSV" value="Aktualisieren von CSV">
@@ -66,7 +59,11 @@
 <a class="buttona" href="email.php">Abuse Email</a>
 <a class="buttona" href="monero.php">Donation</a>
 <a class="buttona" href="Deletefiles.php">Delete Old Files</a>
-<a class="buttona" href="userportal.php">Userportal</a>
+<a class="buttona" href="userportal.php">Userportal</a><br><br><br>
+<a class="buttona" href="uploadlimit.php">Uploadlimit</a>
+<a class="buttona" href="admin_gift_cards.php">Coupons</a>
+<a class="buttona" href="subscrition.php">Remove expired subscriptions</a>
+<a class="buttona" href="setup.php">Setup</a>
 </p>
 </div>
 </main>

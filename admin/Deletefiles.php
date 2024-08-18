@@ -15,7 +15,6 @@
                 checkboxes[i].checked = source.checked;
             }
         }
-
     </script>
 </head>
 <body>
@@ -29,6 +28,7 @@
             <button type="submit" name="maxAge" value="90">90 Days</button>
             <button type="submit" name="maxAge" value="120">120 Days</button>
             <button type="submit" name="addNewFiles">Set all dates to current date</button>
+            <button type="submit" name="cleanupCSV">Cleanup CSV</button> <!-- Neue Schaltfläche zum Bereinigen der CSV -->
         </div>
     </form>
     <a class="bauttona" href="deactivateoldfilecollection.php">Options Files</a>
@@ -116,8 +116,33 @@
                 // Anzeigen, dass neue Dateien hinzugefügt wurden
                 echo "<p>$newFilesAdded neue Dateien wurden hinzugefügt.</p>";
             }
+
+            // CSV bereinigen
+            if (isset($_POST["cleanupCSV"])) {
+                $cleanedFileData = [];
+                $removedFilesCount = 0;
+
+                foreach ($fileData as $line) {
+                    $columns = explode(',', $line);
+                    $fileName = trim($columns[0]);
+
+                    // Prüfen, ob die Datei noch existiert
+                    if (file_exists('../Files/' . $fileName)) {
+                        $cleanedFileData[] = $line;
+                    } else {
+                        $removedFilesCount++;
+                    }
+                }
+
+                // Aktualisiere die CSV-Datei
+                file_put_contents($csvFile, implode('', $cleanedFileData));
+
+                // Ergebnis anzeigen
+                echo "<p>$removedFilesCount Dateien, die nicht mehr existierten, wurden aus der CSV entfernt.</p>";
+            }
         }
-          // Verarbeitung der Löschanfragen
+
+        // Verarbeitung der Löschanfragen
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["deleteSelected"])) {
             $deletedFiles = $_POST["deleteFiles"];
             $filesToDelete = 0;

@@ -1,4 +1,7 @@
 <?php
+// config.php einbinden
+include 'config.php';
+
 function generateRandomString($length = 32) {
     return bin2hex(random_bytes($length / 2));
 }
@@ -36,7 +39,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     if (file_put_contents($htpasswd_file, $htpasswd_entry, FILE_APPEND | LOCK_EX) === false) {
         die('Fehler beim Schreiben in die .htpasswd-Datei.');
     } else {
-        echo "<!DOCTYPE html>
+        // Nur den Benutzernamen in der Datenbank speichern
+        try {
+            // Datenbankverbindung (aus config.php)
+            global $pdo;
+
+            // SQL-Statement zum Einfügen des Benutzernamens
+            $sql = "INSERT INTO users (username) VALUES (:username)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':username' => $username
+            ]);
+
+            // Erfolgreiches Einfügen
+            echo "<!DOCTYPE html>
 <html lang='de'>
 <head>
     <meta charset='UTF-8'>
@@ -114,6 +130,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     </script>
 </body>
 </html>";
+
+        } catch (PDOException $e) {
+            die('Fehler beim Einfügen des Benutzernamens in die Datenbank: ' . $e->getMessage());
+        }
     }
 } else {
     echo "Ungültige Anfrage.";

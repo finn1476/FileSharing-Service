@@ -7,8 +7,15 @@ function addReportToDatabase($email, $filenames, $description, $reason, $passwor
 
     $caseNumbers = []; // Array zur Speicherung der generierten Fallnummern
 
-    foreach ($filenames as $filename) {
+    // Sicherstellen, dass die Anzahl der Passwörter der Anzahl der Dateinamen entspricht
+    if (count($filenames) != count($passwords)) {
+        echo "Error: The number of filenames does not match the number of passwords.";
+        return false;
+    }
+
+    foreach ($filenames as $index => $filename) {
         $caseNumber = generateCaseNumber(); // Generierung einer neuen Fallnummer für jeden Dateinamen
+        $password = $passwords[$index]; // Das entsprechende Passwort für den Dateinamen holen
 
         try {
             // SQL-Abfrage zum Einfügen des Berichts
@@ -22,7 +29,7 @@ function addReportToDatabase($email, $filenames, $description, $reason, $passwor
                 ':filename' => $filename,
                 ':description' => $description,
                 ':reason' => $reason,
-                ':passwords' => implode(',', $passwords)
+                ':passwords' => $password
             ]);
 
             $caseNumbers[] = $caseNumber; // Hinzufügen der generierten Fallnummer zum Array

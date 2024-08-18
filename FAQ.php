@@ -101,7 +101,7 @@ if (is_array($maxFileSize)) {
             </li>
             <li>
                 <h3>Is there a limit on file size?</h3>
-                <p>- Yes, the maximum file size allowed is <?php echo $maxFileSize; ?> MB.</p>
+                <p>- Yes, <a href="pricing.php">Pricing</a></p>
             </li>
         </ul>
         <footer>

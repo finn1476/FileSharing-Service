@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -59,21 +62,35 @@
         <div class="container">
             <h1>Datei Löschen</h1>
             <?php
-            session_start();
+            
 
             if (!isset($_SESSION['username'])) {
                 header("Location: index.html");
                 exit;
             }
 
+            require 'config.php'; // Konfigurationsdatei für die Datenbankverbindung einbinden
+
             if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['filename'])) {
                 $filename = $_GET['filename'];
                 $uploadDir = '../Files/'; // Verzeichnis, in dem die Dateien gespeichert sind
+
+                // Überprüfen, ob die Datei existiert
+                if (file_exists($uploadDir . $filename)) {
+                    $fileSize = filesize($uploadDir . $filename);
+                } else {
+                    echo "Die Datei existiert nicht: $filename";
+                    exit;
+                }
+
+                echo "Berechnete Dateigröße: $fileSize Bytes<br>";
 
                 // Überprüfen, ob die Datei dem aktuellen Benutzer gehört
                 $fileBelongsToUser = false;
                 $csvFile = '../Uploaded_Files/files.csv'; // Pfad zur CSV-Datei mit den Dateiinformationen
                 $fileData = array();
+
+                // CSV-Datei aktualisieren
                 if (($handle = fopen($csvFile, 'r')) !== false) {
                     while (($row = fgetcsv($handle)) !== false) {
                         if ($row[0] === $filename && $row[1] === $_SESSION['username']) {
@@ -83,32 +100,61 @@
                         }
                     }
                     fclose($handle);
+
+                    if ($fileBelongsToUser) {
+                        // Versuche, die Datei zu löschen
+                        if (unlink($uploadDir . $filename)) {
+                            // Die Datei wurde erfolgreich gelöscht
+                            // Aktualisiere die CSV-Datei
+                            if (($handle = fopen($csvFile, 'w')) !== false) {
+                                foreach ($fileData as $row) {
+                                    fputcsv($handle, $row);
+                                }
+                                fclose($handle);
+
+                                // Aktualisieren Sie die Datenbank, um die Datei und die Größe zu löschen
+                                try {
+                                    $pdo->beginTransaction();
+
+                                    // Löschen Sie nur einen Eintrag aus der Tabelle uploads
+                                    $sql = "DELETE FROM uploads 
+                                            WHERE user_id = (SELECT id FROM users WHERE username = :username) 
+                                            AND file_size = :file_size 
+                                            LIMIT 1"; // Nur einen Eintrag löschen
+                                    $stmt = $pdo->prepare($sql);
+                                    $stmt->execute([
+                                        ':username' => $_SESSION['username'],
+                                        ':file_size' => $fileSize
+                                    ]);
+
+                                    if ($stmt->rowCount() > 0) {
+                                        // Eintrag erfolgreich gelöscht
+                                        $pdo->commit();
+                                        echo "Die Datei wurde erfolgreich gelöscht: $filename";
+                                    } else {
+                                        // Kein Eintrag gefunden
+                                        $pdo->rollBack();
+                                        echo "Kein Eintrag in der Datenbank gefunden oder bereits gelöscht.<br>";
+                                        echo "Überprüfte Dateigröße: $fileSize Bytes";
+                                    }
+                                } catch (PDOException $e) {
+                                    $pdo->rollBack();
+                                    echo "Fehler beim Aktualisieren der Datenbank: " . $e->getMessage();
+                                }
+                            } else {
+                                echo "Fehler beim Aktualisieren der CSV-Datei: $csvFile";
+                            }
+                        } else {
+                            // Fehler beim Löschen der Datei
+                            echo "Fehler beim Löschen der Datei: $filename";
+                        }
+                    } else {
+                        // Die Datei gehört nicht dem aktuellen Benutzer
+                        echo "Die Datei gehört nicht Ihnen oder existiert nicht: $filename";
+                    }
                 } else {
                     echo "Fehler beim Öffnen der CSV-Datei: $csvFile";
                     exit;
-                }
-
-                if ($fileBelongsToUser) {
-                    // Versuche, die Datei zu löschen
-                    if (unlink($uploadDir . $filename)) {
-                        // Die Datei wurde erfolgreich gelöscht
-                        // Aktualisiere die CSV-Datei
-                        if (($handle = fopen($csvFile, 'w')) !== false) {
-                            foreach ($fileData as $row) {
-                                fputcsv($handle, $row);
-                            }
-                            fclose($handle);
-                            echo "Die Datei wurde erfolgreich gelöscht: $filename";
-                        } else {
-                            echo "Fehler beim Aktualisieren der CSV-Datei: $csvFile";
-                        }
-                    } else {
-                        // Fehler beim Löschen der Datei
-                        echo "Fehler beim Löschen der Datei: $filename";
-                    }
-                } else {
-                    // Die Datei gehört nicht dem aktuellen Benutzer
-                    echo "Die Datei gehört nicht Ihnen oder existiert nicht: $filename";
                 }
             } else {
                 // Ungültige Anfrage
@@ -121,8 +167,8 @@
             </div>
         </div>
     </main>
-        <footer>
-            <?php include("../templates/footeruser.php"); ?>
-        </footer>
+    <footer>
+        <?php include("../templates/footeruser.php"); ?>
+    </footer>
 </body>
 </html>
