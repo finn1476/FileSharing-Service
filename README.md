@@ -82,7 +82,6 @@ For questions or suggestions, please open an [issue](https://github.com/finn1476
 - User
 ![grafik](https://github.com/user-attachments/assets/b181a98f-4b87-4d5a-a6e4-2ef74ea9e145)
 ![grafik](https://github.com/user-attachments/assets/227ae55d-d3ad-451f-bbf1-007f95022930)
-![grafik](https://github.com/user-attachments/assets/701852f3-543d-4518-8fff-59b1d7d0d5db)
 
 - Admin
 ![grafik](https://github.com/user-attachments/assets/2c0131f4-e785-4b45-9e68-c0da3af32c86)
