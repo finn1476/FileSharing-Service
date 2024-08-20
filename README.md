@@ -9,6 +9,7 @@ This web application allows users to quickly and easily upload files. The applic
 - **Easy File Upload**: Users can upload files with just one click.
 - **Progress Bar**: Track the progress of your file upload.
 - **File Size Limit**: Administrators can set a maximum file size for uploads.
+- **File Download Speed**: Administrators can set a download speed for downloads.
 - **Monero Donations**: Option to enable Monero cryptocurrency donations.
 - **User Management**: Admin panel for managing administrators, including creation, deletion, and password changes.
 - **File Management**: Administrators can delete and suspend files as needed.
