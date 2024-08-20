@@ -136,6 +136,10 @@ try {
                     <td><?php echo htmlspecialchars($limit['duration']); ?></td>
                 </tr>
                 <tr>
+                    <th>Download Speed (kb/s)</th> <!-- Added row for download speed -->
+                    <td><?php echo htmlspecialchars($limit['download_speed']); ?> kb/s</td>
+                </tr>
+                <tr>
                     <th>Price (€)</th>
                     <td><?php echo htmlspecialchars($limit['price']); ?> €</td>
                 </tr>

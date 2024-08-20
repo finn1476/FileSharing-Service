@@ -21,73 +21,109 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Create the tables and insert initial data
         $createTablesQuery = "
-        CREATE TABLE IF NOT EXISTS file_upload_limits (
-            id INT(11) NOT NULL AUTO_INCREMENT,
-            user_status VARCHAR(50) NOT NULL,
-            upload_limit INT(11) NOT NULL,
-            upload_limit_file INT(11) NOT NULL,
-            duration INT(11) NOT NULL,
-            price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-            PRIMARY KEY (id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-        INSERT INTO file_upload_limits (id, user_status, upload_limit, upload_limit_file, duration, price) VALUES
-        (1, 'Not_Registered', 50, 50, 0, 0.00),
-        (2, 'Registered', 500, 100, 0, 0.00),
-        (3, 'Payed', 2000, 500, 30, 5.00)
-        ON DUPLICATE KEY UPDATE id=VALUES(id);
-
-        CREATE TABLE IF NOT EXISTS users (
-            id INT(11) NOT NULL AUTO_INCREMENT,
-            username VARCHAR(255) NOT NULL,
-            file_upload_limit_id INT(11) NOT NULL DEFAULT 2,
-            failed_attempts INT(11) DEFAULT 0,
-            upload_limit_expiration_date DATE DEFAULT NULL,
-            PRIMARY KEY (id),
-            KEY (file_upload_limit_id),
-            CONSTRAINT fk_file_upload_limit FOREIGN KEY (file_upload_limit_id) REFERENCES file_upload_limits (id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-        CREATE TABLE IF NOT EXISTS uploads (
-            id INT(11) NOT NULL AUTO_INCREMENT,
-            user_id INT(11) NOT NULL,
-            file_size BIGINT(20) NOT NULL,
-            PRIMARY KEY (id),
-            KEY (user_id),
-            CONSTRAINT uploads_ibfk_1 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-        CREATE TABLE IF NOT EXISTS coupons (
-            id INT(11) NOT NULL AUTO_INCREMENT,
-            code VARCHAR(255) NOT NULL,
-            file_upload_limit_id INT(11) NOT NULL,
-            distributed TINYINT(1) DEFAULT 0,
-            PRIMARY KEY (id),
-            UNIQUE KEY (code),
-            KEY (file_upload_limit_id),
-            CONSTRAINT coupons_ibfk_1 FOREIGN KEY (file_upload_limit_id) REFERENCES file_upload_limits (id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-        CREATE TABLE IF NOT EXISTS reports (
-            id INT(11) NOT NULL AUTO_INCREMENT,
-            case_number VARCHAR(6) NOT NULL,
-            email VARCHAR(255) NOT NULL,
-            filename VARCHAR(255) NOT NULL,
-            description TEXT NOT NULL,
-            reason VARCHAR(255) NOT NULL,
-            passwords TEXT NOT NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-        CREATE TABLE IF NOT EXISTS configuration (
-            id INT(11) NOT NULL AUTO_INCREMENT,
-            email VARCHAR(255) NOT NULL,
-            PRIMARY KEY (id)
+        CREATE TABLE configuration (
+            id int(11) NOT NULL,
+            email varchar(255) NOT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
         INSERT INTO configuration (id, email) VALUES
         (1, 'a@a.com');
+
+        CREATE TABLE coupons (
+            id int(11) NOT NULL,
+            code varchar(255) NOT NULL,
+            file_upload_limit_id int(11) NOT NULL,
+            distributed tinyint(1) DEFAULT 0
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        CREATE TABLE file_upload_limits (
+            id int(11) NOT NULL,
+            user_status varchar(50) NOT NULL,
+            upload_limit int(11) NOT NULL,
+            upload_limit_file int(11) NOT NULL,
+            duration int(11) NOT NULL,
+            price decimal(10,2) NOT NULL DEFAULT 0.00,
+            download_speed int(11) DEFAULT 0
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        INSERT INTO file_upload_limits (id, user_status, upload_limit, upload_limit_file, duration, price, download_speed) VALUES
+        (1, 'Not_Registered', 5, 5, 0, 0.00, 5),
+        (2, 'Registered', 500, 1000, 0, 0.00, 50),
+        (3, 'Payed', 2000, 500, 30, 5.00, 123);
+
+        CREATE TABLE reports (
+            id int(11) NOT NULL,
+            case_number varchar(6) NOT NULL,
+            email varchar(255) NOT NULL,
+            filename varchar(255) NOT NULL,
+            description text NOT NULL,
+            reason varchar(255) NOT NULL,
+            passwords text NOT NULL,
+            created_at timestamp NOT NULL DEFAULT current_timestamp()
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        CREATE TABLE uploads (
+            id int(11) NOT NULL,
+            user_id int(11) NOT NULL,
+            file_size bigint(20) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        CREATE TABLE users (
+            id int(11) NOT NULL,
+            username varchar(255) NOT NULL,
+            file_upload_limit_id int(11) NOT NULL DEFAULT 2,
+            failed_attempts int(11) DEFAULT 0,
+            upload_limit_expiration_date date DEFAULT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+        ALTER TABLE configuration
+            ADD PRIMARY KEY (id);
+
+        ALTER TABLE coupons
+            ADD PRIMARY KEY (id),
+            ADD UNIQUE KEY code (code),
+            ADD KEY file_upload_limit_id (file_upload_limit_id);
+
+        ALTER TABLE file_upload_limits
+            ADD PRIMARY KEY (id);
+
+        ALTER TABLE reports
+            ADD PRIMARY KEY (id);
+
+        ALTER TABLE uploads
+            ADD PRIMARY KEY (id),
+            ADD KEY user_id (user_id);
+
+        ALTER TABLE users
+            ADD PRIMARY KEY (id),
+            ADD KEY file_upload_limit_id (file_upload_limit_id);
+
+        ALTER TABLE configuration
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+        ALTER TABLE coupons
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+
+        ALTER TABLE file_upload_limits
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+        ALTER TABLE reports
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+
+        ALTER TABLE uploads
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+
+        ALTER TABLE users
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+
+        ALTER TABLE coupons
+            ADD CONSTRAINT coupons_ibfk_1 FOREIGN KEY (file_upload_limit_id) REFERENCES file_upload_limits (id);
+
+        ALTER TABLE uploads
+            ADD CONSTRAINT uploads_ibfk_1 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+
+        ALTER TABLE users
+            ADD CONSTRAINT fk_file_upload_limit FOREIGN KEY (file_upload_limit_id) REFERENCES file_upload_limits (id);
         ";
 
         $pdo->exec($createTablesQuery);

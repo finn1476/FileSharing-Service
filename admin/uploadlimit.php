@@ -7,14 +7,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_limits'])) {
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'limit_') === 0) {
-                $userStatus = str_replace(['limit_', '_file', '_duration', '_price'], '', $key);
+                $userStatus = str_replace(['limit_', '_file', '_duration', '_price', '_download_speed'], '', $key);
                 $uploadLimit = $_POST['limit_' . $userStatus];
                 $uploadLimitFile = $_POST['limit_' . $userStatus . '_file'];
                 $duration = $_POST['duration_' . $userStatus];
                 $price = $_POST['price_' . $userStatus];
+                $downloadSpeed = $_POST['download_speed_' . $userStatus]; // New field
 
                 $sql = "UPDATE file_upload_limits 
-                        SET upload_limit = :uploadLimit, upload_limit_file = :uploadLimitFile, duration = :duration, price = :price 
+                        SET upload_limit = :uploadLimit, upload_limit_file = :uploadLimitFile, duration = :duration, price = :price, download_speed = :downloadSpeed 
                         WHERE user_status = :userStatus";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
@@ -22,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':uploadLimitFile' => $uploadLimitFile,
                     ':duration' => $duration,
                     ':price' => $price,
+                    ':downloadSpeed' => $downloadSpeed, // New parameter
                     ':userStatus' => $userStatus
                 ]);
             }
         }
-
         echo "<p style='color: green;'>Upload limits successfully updated!</p>";
     } elseif (isset($_POST['add_entry'])) {
         // Retrieve input values from the form
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uploadLimitFile = $_POST['upload_limit_file'];
         $duration = $_POST['duration'];
         $price = $_POST['price'];
+		$downloadSpeed = $_POST['download_speed'];
 
         // Check if the user status already exists
         $sql = "SELECT COUNT(*) FROM file_upload_limits WHERE user_status = :userStatus";
@@ -45,15 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($exists) {
             echo "<p style='color: red;'>The user status already exists!</p>";
         } else {
-            $sql = "INSERT INTO file_upload_limits (user_status, upload_limit, upload_limit_file, duration, price) 
-                    VALUES (:userStatus, :uploadLimit, :uploadLimitFile, :duration, :price)";
+             $sql = "INSERT INTO file_upload_limits (user_status, upload_limit, upload_limit_file, duration, price, download_speed) 
+                VALUES (:userStatus, :uploadLimit, :uploadLimitFile, :duration, :price, :downloadSpeed)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':userStatus' => $userStatus,
                 ':uploadLimit' => $uploadLimit,
                 ':uploadLimitFile' => $uploadLimitFile,
                 ':duration' => $duration,
-                ':price' => $price
+                ':price' => $price,
+				':downloadSpeed' => $downloadSpeed
             ]);
             echo "<p style='color: green;'>New entry successfully added!</p>";
         }
@@ -80,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // SQL query to retrieve data
-$sql = "SELECT user_status, upload_limit, upload_limit_file, duration, price FROM file_upload_limits";
+$sql = "SELECT user_status, upload_limit, upload_limit_file, duration, price, download_speed FROM file_upload_limits";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -213,6 +216,7 @@ $email = $config['email'];
                 <th>Current Upload Limit (MB)</th>
                 <th>Current File Limit (MB)</th>
                 <th>Duration (Days)</th>
+				<th>Download Speed (kb/s)</th>
                 <th>Price (€)</th>
             </tr>
         </thead>
@@ -223,6 +227,7 @@ $email = $config['email'];
                     <td><?php echo htmlspecialchars($row['upload_limit']); ?> MB</td>
                     <td><?php echo htmlspecialchars($row['upload_limit_file']); ?> MB</td>
                     <td><?php echo htmlspecialchars($row['duration']); ?> Days</td>
+					<td><?php echo htmlspecialchars($row['download_speed']); ?> kb/s</td>
                     <td><?php echo htmlspecialchars($row['price']); ?> €</td>
                 </tr>
             <?php endforeach; ?>
@@ -255,7 +260,15 @@ $email = $config['email'];
                    name="duration_<?php echo htmlspecialchars($row['user_status']); ?>" 
                    value="<?php echo htmlspecialchars($row['duration']); ?>" >
         </div>
-        <div class="input-container">
+         <div class="input-container">
+            <label for="download_speed_<?php echo htmlspecialchars($row['user_status']); ?>">
+                <?php echo htmlspecialchars($row['user_status']); ?> (Download Speed, kb/s):
+            </label>
+            <input type="number" id="download_speed_<?php echo htmlspecialchars($row['user_status']); ?>" 
+                   name="download_speed_<?php echo htmlspecialchars($row['user_status']); ?>" 
+                   value="<?php echo htmlspecialchars($row['download_speed']); ?>" required>
+        </div>
+		<div class="input-container">
             <label for="price_<?php echo htmlspecialchars($row['user_status']); ?>">
                 <?php echo htmlspecialchars($row['user_status']); ?> (Price, €):
             </label>
@@ -286,6 +299,10 @@ $email = $config['email'];
         <div class="input-container">
             <label for="duration">Duration (Days):</label>
             <input type="number" id="duration" name="duration" >
+        </div>
+		        <div class="input-container">
+            <label for="download_speed">Download Speed (kb/s):</label>
+            <input type="number" id="download_speed" name="download_speed" required>
         </div>
         <div class="input-container">
             <label for="price">Price (€):</label>

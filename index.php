@@ -105,6 +105,33 @@ function formatBytes($bytes, $precision = 2) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Anonfile</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+      /* Cookie Banner Styles */
+      #cookieBanner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #333;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        display: none; /* Hidden by default */
+        z-index: 9999; /* Ensure it is above other elements */
+      }
+      #cookieBanner button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #cookieBanner button:hover {
+        background-color: #45a049;
+      }
+    </style>
   </head>
   <body>
   <main>
@@ -154,7 +181,12 @@ function formatBytes($bytes, $precision = 2) {
 </div>
 <!-- End Donation Button with Monero Wallet Address -->
 
-
+<!-- Start Cookie Banner -->
+<div id="cookieBanner">
+  <p>This website uses cookies for authentication purposes and to manage the display of this cookie banner. By clicking "Accept", you consent to the use of cookies for these purposes. For more details, please see our <a href="datenschutz.php" style="color: #4CAF50;">Privacy Policy</a>. You can adjust your cookie preferences through your browser settings.</p>
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+<!-- End Cookie Banner -->
 
 <script>
 function _(el) {
@@ -194,6 +226,20 @@ function errorHandler(event) {
 function abortHandler(event) {
   _("status").innerHTML = "Upload Aborted";
 }
+
+function showCookieBanner() {
+  if (!localStorage.getItem('cookiesAccepted')) {
+    document.getElementById('cookieBanner').style.display = 'block';
+  }
+}
+
+function acceptCookies() {
+  localStorage.setItem('cookiesAccepted', 'true');
+  document.getElementById('cookieBanner').style.display = 'none';
+}
+
+// Aufrufen der Funktion zum Anzeigen des Cookie-Banners
+showCookieBanner();
 </script>
 <footer>
 <?php include("templates/footer.php"); ?>

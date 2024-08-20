@@ -1,3 +1,8 @@
+<?php
+
+session_start();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +131,7 @@
 $decryptedTempFile = 'Files/temp_' . $downloadFilename;
 
 // Retrieve the decrypted ZIP file content using download_handler.php
-$decryptedContent = file_get_contents("http://127.0.0.1/download_handler.php?filename=$downloadFilename&key=$key");
+$decryptedContent = file_get_contents("http://127.0.0.1/preview_file.php?filename=$downloadFilename&key=$key");
 
 if ($decryptedContent === false) {
     echo "Failed to retrieve decrypted content.";
@@ -161,16 +166,16 @@ if ($decryptedContent === false) {
                     $audioExtensions = ['mp3', 'ogg', 'wav'];
 
                     if (in_array(strtolower($fileExtension), $imageExtensions)) {
-                        echo "<p>Preview of the file: <br/><img class='picture-preview' src='download_handler.php?filename=$downloadFilename&key=$key' alt='File Preview' ></p>";
+                        echo "<p>Preview of the file: <br/><img class='picture-preview' src='preview_file.php?filename=$downloadFilename&key=$key' alt='File Preview' ></p>";
                     } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
                         echo "<p>Preview of the file:</p>";
                         echo "<div class='preview-container'>";
-                        echo "<video class='picture-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='download_handler.php?filename=$downloadFilename&key=$key' type='video/mp4'></video>";
+                        echo "<video class='picture-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='preview_file.php?filename=$downloadFilename&key=$key' type='video/mp4'></video>";
                         echo "</div>";
                     } elseif (in_array(strtolower($fileExtension), $audioExtensions)) {
                         echo "<p>Preview of the file:</p>";
                         echo "<div class='preview-container'>";
-                        echo "<audio class='audio-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='download_handler.php?filename=$downloadFilename&key=$key' type='audio/mpeg'></audio>";
+                        echo "<audio class='audio-preview' controls ontimeupdate='limitPlayTime(this, 10)'><source src='preview_file.php?filename=$downloadFilename&key=$key' type='audio/mpeg'></audio>";
                         echo "</div>";
                     }
 
