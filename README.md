@@ -16,11 +16,11 @@ This web application allows users to quickly and easily upload files. The applic
 - **Reporting Management**: Administrators can review reported files and take appropriate action.
 - **User Accounts**: Users can create accounts to manage their uploaded files and access additional features.
 - **Encryption**: Files are Stored encrypted on the Server.
+- **Paid Storage Upgrade**: Users can pay for additional storage space if they exceed the default storage limit.
 
 ## Planned Features
 
 - **Database Migration**: Transition from CSV file storage to a more robust database system for improved scalability and performance.
-- **Enhanced Storage Options**: Implement a feature allowing users to pay for additional storage space. The specifics of this feature are still under consideration and will be detailed in future updates.
 
 ## Docker Deployment
 
@@ -28,6 +28,14 @@ This web application allows users to quickly and easily upload files. The applic
 
 To deploy this application using Docker, use the official Docker image available on [Docker Hub](https://hub.docker.com/repository/docker/hansat04/filesharing-service/general).
 
+### Persistent Data
+
+Map the following volumes to ensure persistent data:
+
+- `/var/www/html/Files`
+- `/var/www/html/Speicher`
+- `/var/www/html/Uploaded_Files`
+- `/var/www/html/admin`
 #### Download the Image
 
 Use the following command to download the Docker image:
@@ -65,3 +73,26 @@ For questions or suggestions, please open an [issue](https://github.com/finn1476
 
 ## Default Login
 - admin:admin
+
+## Photo Gallery
+- Index
+![grafik](https://github.com/user-attachments/assets/2128d0df-b5f7-47d0-80f2-72e68b87f21c)
+
+- Download
+![grafik](https://github.com/user-attachments/assets/cbd584d2-3cb3-4421-ac00-faa3d33b9aec)
+
+- Subscription
+![grafik](https://github.com/user-attachments/assets/1ca7abdd-49ee-4561-8a44-9df9e575c35f)
+
+- Report
+![grafik](https://github.com/user-attachments/assets/3baaa4d4-e691-43aa-aac5-5064c4cef4ad)
+
+- User
+![grafik](https://github.com/user-attachments/assets/b181a98f-4b87-4d5a-a6e4-2ef74ea9e145)
+![grafik](https://github.com/user-attachments/assets/227ae55d-d3ad-451f-bbf1-007f95022930)
+
+- Admin
+![grafik](https://github.com/user-attachments/assets/2c0131f4-e785-4b45-9e68-c0da3af32c86)
+![grafik](https://github.com/user-attachments/assets/ecf5fd58-da5f-4b96-a267-a1047a2499b4)
+![grafik](https://github.com/user-attachments/assets/e270fd41-2e24-447f-ba95-ad9091f39f7c)
+
