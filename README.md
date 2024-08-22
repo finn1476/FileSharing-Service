@@ -85,7 +85,7 @@ For questions or suggestions, please open an [issue](https://github.com/finn1476
 
 
 - Subscription
-![grafik](https://github.com/user-attachments/assets/1ca7abdd-49ee-4561-8a44-9df9e575c35f)
+![grafik](https://github.com/user-attachments/assets/7a4eb89a-2d69-4866-80aa-5a1f89511ef0)
 
 - Report
 ![grafik](https://github.com/user-attachments/assets/4e5c1324-a047-43d9-bf99-8f3938354c7b)
