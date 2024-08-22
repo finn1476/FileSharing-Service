@@ -1,0 +1,2 @@
+# Setze die benutzerdefinierte Fehlerseite für 404 Fehler
+ErrorDocument 404 /custom_404.php

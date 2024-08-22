@@ -5,24 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="robots" content="noindex">
-    <link rel="stylesheet" type="text/css" href="style.css" />
     <title>Admin-Seite</title>
     <style>
+        :root {
+            --primary-color: #005f73;
+            --secondary-color: #94d2bd;
+            --accent-color: #ee9b00;
+            --background-color: #f7f9fb;
+            --text-color: #023047;
+            --muted-text-color: #8e9aaf;
+            --border-color: #d9e2ec;
+            --button-color: #56cfe1;
+            --button-hover-color: #028090;
+            --error-color: #e63946;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
             margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 50px auto;
             padding: 20px;
-            background-color: #222;
-            color: #fff;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        p {
+            text-align: center;
         }
 
         .button {
@@ -31,19 +88,17 @@
             padding: 10px;
             margin-top: 10px;
             border: none;
-            border-radius: 3px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
             text-align: center;
-        }
-
-        .button.primary {
-            background-color: #4CAF50;
+            background-color: var(--button-color);
             color: white;
+            transition: background-color 0.3s ease;
         }
 
-        .button.primary:hover {
-            background-color: #45a049;
+        .button:hover {
+            background-color: var(--button-hover-color);
         }
 
         .status {
@@ -59,66 +114,108 @@
         .inactive {
             color: red;
         }
+
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-top: 3px solid var(--secondary-color);
+        }
+
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        footer .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <header>
+        <div class="logo">Admin Panel</div>
+        <nav>
+            <a href="adminpanel5.php">Statistiken</a>
+            <a href="adminpanel4.php">Datei-Typen</a>
+            <a href="adminpanel3.php">Benutzer-Verwaltung</a>
+            <a href="adminpanel2.php">Upload-Grenze</a>
+            <a href="admindelete.php">Löschen</a>
+        </nav>
+    </header>
+
+    <main>
         <h1>Admin-Seite</h1>
         <p>Hier kannst du das Benutzerportal ein- oder ausschalten:</p>
-        <button id="toggleButton" class="button primary">Benutzerportal ein/ausschalten</button>
+        <button id="toggleButton" class="button">Benutzerportal ein/ausschalten</button>
         <div id="statusMessage" class="status"></div>
-    </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="adminpanel5.php">Statistiken</a>
+            <a href="adminpanel4.php">Datei-Typen</a>
+            <a href="adminpanel3.php">Benutzer-Verwaltung</a>
+            <a href="adminpanel2.php">Upload-Grenze</a>
+            <a href="admindelete.php">Löschen</a>
+        </div>
+        <p>&copy; 2024 Anonfile. All rights reserved.</p>
+    </footer>
 
     <script>
-        // Führe diese Funktion aus, wenn das Dokument vollständig geladen ist
         document.addEventListener("DOMContentLoaded", function() {
-            // Derzeitiger Status des Benutzerportals (0 = deaktiviert, 1 = aktiviert)
             var status = 0; // Annahme: Portal ist standardmäßig deaktiviert
 
-            // Button-Element auswählen
             var toggleButton = document.getElementById("toggleButton");
-            // Status-Meldungs-Element auswählen
             var statusMessage = document.getElementById("statusMessage");
 
-            // Funktion zum Aktualisieren der Statusmeldung
             function updateStatusMessage() {
                 statusMessage.innerHTML = (status === 1) ? "<span class='active'>Aktiviert</span>" : "<span class='inactive'>Inaktiv</span>";
             }
 
-            // Funktion zum Laden des Status aus der CSV-Datei
             function loadStatusFromCSV() {
-                // Hier kannst du den Pfad zur CSV-Datei angeben
                 var csvFile = '../Speicher/userportal.csv';
 
-                // Lese den Inhalt der CSV-Datei mittels XMLHttpRequest
                 var request = new XMLHttpRequest();
                 request.open('GET', csvFile, true);
                 request.onreadystatechange = function() {
                     if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
                         var csvData = request.responseText;
-
-                        // Überprüfe, ob "1" in der CSV-Datei vorhanden ist
                         status = (csvData.includes('1')) ? 1 : 0;
-
-                        // Aktualisiere die Statusmeldung
                         updateStatusMessage();
                     }
                 };
                 request.send();
             }
 
-            // Lade den Status aus der CSV-Datei beim Laden der Seite
             loadStatusFromCSV();
 
-            // Funktion zum Speichern des Status in die CSV-Datei
             function saveStatusToCSV() {
-                // Hier kannst du den Pfad zur CSV-Datei angeben
                 var csvFile = '../Speicher/userportal.csv';
-
-                // Inhalt, der in die CSV-Datei geschrieben werden soll
                 var csvData = (status === 1) ? '1' : '0';
 
-                // Erstelle eine Anfrage, um die CSV-Datei zu aktualisieren
                 var request = new XMLHttpRequest();
                 request.open('POST', 'save_status.php', true);
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -130,41 +227,14 @@
                 request.send('status=' + csvData);
             }
 
-            // Eventlistener hinzufügen, um den Status zu ändern, wenn der Knopf gedrückt wird
             toggleButton.addEventListener("click", function() {
-                // Status umschalten
                 status = 1 - status;
-
-                // Nachricht zusammenstellen basierend auf dem neuen Status
                 var message = (status === 1) ? "Benutzerportal wurde aktiviert!" : "Benutzerportal wurde deaktiviert!";
-
-                // Meldung anzeigen
                 alert(message);
-
-                // Aktualisiere die Statusmeldung
                 updateStatusMessage();
-
-                // Speichere den neuen Status in der CSV-Datei
                 saveStatusToCSV();
             });
         });
     </script>
-    <footer class="footera">
-    <div>
-        <h1 class="right"><a class="bauttona" href="adminpanel5.php">Statistiken</a></h1>
-    </div>
-    <div>
-        <h1 class="right"><a class="bauttona" href="adminpanel4.php">Datei-Typen</a></h1>
-    </div>
-    <div>
-        <h1 class="right"><a class="bauttona" href="adminpanel3.php">Benutzer-Verwaltung</a></h1>
-    </div>
-    <div>
-        <h1 class="right"><a class="bauttona" href="adminpanel2.php">Upload-Grenze</a></h1>
-    </div>
-    <div>
-        <h1><a class="bauttona" href="admindelete.php">Löschen</a></h1>
-    </div>
-</footer>
 </body>
 </html>

@@ -2,6 +2,10 @@
 // Include config.php
 include 'config.php';
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // If the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_limits'])) {
@@ -28,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             }
         }
-        echo "<p style='color: green;'>Upload limits successfully updated!</p>";
+        echo "<p class='success'>Upload limits successfully updated!</p>";
     } elseif (isset($_POST['add_entry'])) {
         // Retrieve input values from the form
         $userStatus = $_POST['user_status'];
@@ -36,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uploadLimitFile = $_POST['upload_limit_file'];
         $duration = $_POST['duration'];
         $price = $_POST['price'];
-		$downloadSpeed = $_POST['download_speed'];
+        $downloadSpeed = $_POST['download_speed'];
 
         // Check if the user status already exists
         $sql = "SELECT COUNT(*) FROM file_upload_limits WHERE user_status = :userStatus";
@@ -45,9 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $exists = $stmt->fetchColumn();
 
         if ($exists) {
-            echo "<p style='color: red;'>The user status already exists!</p>";
+            echo "<p class='error'>The user status already exists!</p>";
         } else {
-             $sql = "INSERT INTO file_upload_limits (user_status, upload_limit, upload_limit_file, duration, price, download_speed) 
+            $sql = "INSERT INTO file_upload_limits (user_status, upload_limit, upload_limit_file, duration, price, download_speed) 
                 VALUES (:userStatus, :uploadLimit, :uploadLimitFile, :duration, :price, :downloadSpeed)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -56,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':uploadLimitFile' => $uploadLimitFile,
                 ':duration' => $duration,
                 ':price' => $price,
-				':downloadSpeed' => $downloadSpeed
+                ':downloadSpeed' => $downloadSpeed
             ]);
-            echo "<p style='color: green;'>New entry successfully added!</p>";
+            echo "<p class='success'>New entry successfully added!</p>";
         }
     } elseif (isset($_POST['delete_entry'])) {
         // Retrieve input value for deletion
@@ -68,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':userStatus' => $userStatus]);
 
-        echo "<p style='color: red;'>Entry successfully deleted!</p>";
+        echo "<p class='error'>Entry successfully deleted!</p>";
     } elseif (isset($_POST['update_email'])) {
         // Retrieve the new email value
         $email = $_POST['email'];
@@ -78,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':email' => $email]);
 
-        echo "<p style='color: green;'>Email successfully updated!</p>";
+        echo "<p class='success'>Email successfully updated!</p>";
     }
 }
 
@@ -93,7 +97,7 @@ $sql = "SELECT email FROM configuration WHERE id = 1";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $config = $stmt->fetch(PDO::FETCH_ASSOC);
-$email = $config['email'];
+$email = $config['email'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -102,240 +106,302 @@ $email = $config['email'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload Limits</title>
-    
     <style>
-        html, main {
-            overflow-x: hidden;
+        :root {
+            --primary-color: #005f73;
+            --secondary-color: #94d2bd;
+            --accent-color: #ee9b00;
+            --background-color: #f7f9fb;
+            --text-color: #023047;
+            --muted-text-color: #8e9aaf;
+            --border-color: #d9e2ec;
+            --button-color: #56cfe1;
+            --button-hover-color: #028090;
+            --error-color: #e63946;
+            --success-color: #56cfe1;
         }
 
-        html {
-            font-family: monospace;
-            background: black;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
             color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
         }
 
-        table {
-            border-collapse: collapse;
-            margin: 20px;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
+        header .logo {
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 0.5rem;
-            font-size: 1rem;
-            text-align: left;
+        nav {
+            display: flex;
+            gap: 20px;
         }
 
-        th {
-            background-color: #084cdf;
+        nav a {
             color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
         }
 
         .awasr {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding-top: 1.6%;
+            max-width: 8000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid var(--border-color);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        td {
+            background-color: white;
+        }
+
+        .success {
+            color: var(--success-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: var(--error-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
         }
 
         .input-container {
-            margin: 1rem;
+            margin: 0.5rem 0;
             display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 500px;
+            flex-direction: column;
         }
 
         .input-container label {
-            flex: 1;
-            margin-right: 1rem;
-            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        .input-container input[type="number"], .input-container input[type="text"], .input-container input[type="email"] {
-            flex: 1;
+        .input-container input {
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ddd;
-            background-color: #333;
-            color: white;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
             font-size: 1rem;
         }
 
         .button-container {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
+            margin-top: 1rem;
+            text-align: center;
         }
 
         input[type="submit"] {
-            margin-right: 20px;
             border: none;
-            background: #4e595d;
+            background: var(--button-color);
             padding: 10px 20px;
-            border-radius: 10px;
-            color: #fff;
+            border-radius: 5px;
+            color: white;
             cursor: pointer;
-            transition: background .2s ease-in-out;
+            transition: background-color 0.3s ease;
             font-size: 1rem;
         }
 
         input[type="submit"]:hover {
-            background: #6b787d;
+            background: var(--button-hover-color);
         }
 
-        .floadtobx {
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-top: 3px solid var(--secondary-color);
+        }
+
+        footer .footer-links {
             display: flex;
             justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
         }
-		.homelink{
-			text-decoration:none;
-			color:white;
-			background:grey;
-			padding:1rem;
-			border-radius:0.5rem;
-		}
-		.homelink:hover{
-			background:lightgrey;
-		}
+
+        footer .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-links a:hover {
+            color: var(--accent-color);
+        }
     </style>
 </head>
 <body>
-<main>
-<div class="awasr">
-    <h1>File Upload Limits</h1>
+<header>
+        <div class="logo">Admin Panel</div>
+        <nav>
+            <a href="adminpanel5.php">Statistiken</a>
+            <a href="adminpanel4.php">Datei-Typen</a>
+            <a href="adminpanel3.php">Benutzer-Verwaltung</a>
+            <a href="adminpanel2.php">Upload-Grenze</a>
+            <a href="admindelete.php">Löschen</a>
+        </nav>
+    </header>
+    <div class="awasr">
+        <h1>File Upload Limits</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>User Status</th>
-                <th>Current Upload Limit (MB)</th>
-                <th>Current File Limit (MB)</th>
-                <th>Duration (Days)</th>
-				<th>Download Speed (kb/s)</th>
-                <th>Price (€)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($results as $row): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['user_status']); ?></td>
-                    <td><?php echo htmlspecialchars($row['upload_limit']); ?> MB</td>
-                    <td><?php echo htmlspecialchars($row['upload_limit_file']); ?> MB</td>
-                    <td><?php echo htmlspecialchars($row['duration']); ?> Days</td>
-					<td><?php echo htmlspecialchars($row['download_speed']); ?> kb/s</td>
-                    <td><?php echo htmlspecialchars($row['price']); ?> €</td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-<div class="floadtobx">
-    <form method="post">
-        <?php foreach ($results as $row): ?>
-        <div class="input-container">
-            <label for="limit_<?php echo htmlspecialchars($row['user_status']); ?>">
-                <?php echo htmlspecialchars($row['user_status']); ?> (Total Limit, MB):
-            </label>
-            <input type="number" id="limit_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   name="limit_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   value="<?php echo htmlspecialchars($row['upload_limit']); ?>" required>
-        </div>
-        <div class="input-container">
-            <label for="limit_<?php echo htmlspecialchars($row['user_status']); ?>_file">
-                <?php echo htmlspecialchars($row['user_status']); ?> (File Limit, MB):
-            </label>
-            <input type="number" id="limit_<?php echo htmlspecialchars($row['user_status']); ?>_file" 
-                   name="limit_<?php echo htmlspecialchars($row['user_status']); ?>_file" 
-                   value="<?php echo htmlspecialchars($row['upload_limit_file']); ?>" required>
-        </div>
-        <div class="input-container">
-            <label for="duration_<?php echo htmlspecialchars($row['user_status']); ?>">
-                <?php echo htmlspecialchars($row['user_status']); ?> (Duration, Days):
-            </label>
-            <input type="number" id="duration_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   name="duration_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   value="<?php echo htmlspecialchars($row['duration']); ?>" >
-        </div>
-         <div class="input-container">
-            <label for="download_speed_<?php echo htmlspecialchars($row['user_status']); ?>">
-                <?php echo htmlspecialchars($row['user_status']); ?> (Download Speed, kb/s):
-            </label>
-            <input type="number" id="download_speed_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   name="download_speed_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   value="<?php echo htmlspecialchars($row['download_speed']); ?>" required>
-        </div>
-		<div class="input-container">
-            <label for="price_<?php echo htmlspecialchars($row['user_status']); ?>">
-                <?php echo htmlspecialchars($row['user_status']); ?> (Price, €):
-            </label>
-            <input type="number" step="0.01" id="price_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   name="price_<?php echo htmlspecialchars($row['user_status']); ?>" 
-                   value="<?php echo htmlspecialchars($row['price']); ?>" required>
-        </div>
-        <hr>
-        <?php endforeach; ?>
-        <div class="button-container">
-            <input type="submit" name="update_limits" value="Update Upload Limits">
-        </div>
-    </form>
+        <!-- Update Form -->
+        <form method="post">
+            <h2>Update Upload Limits</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User Status</th>
+                        <th>Upload Limit (MB)</th>
+                        <th>Upload Limit File (MB)</th>
+                        <th>Duration (Days)</th>
+                        <th>Download Speed (kb/s)</th>
+                        <th>Price (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($results as $row): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['user_status']) ?></td>
+                            <td>
+                                <input type="text" id="limit_<?= htmlspecialchars($row['user_status']) ?>" name="limit_<?= htmlspecialchars($row['user_status']) ?>" value="<?= htmlspecialchars($row['upload_limit']) ?>">
+                            </td>
+                            <td>
+                                <input type="text" id="limit_<?= htmlspecialchars($row['user_status']) ?>_file" name="limit_<?= htmlspecialchars($row['user_status']) ?>_file" value="<?= htmlspecialchars($row['upload_limit_file']) ?>">
+                            </td>
+                            <td>
+                                <input type="text" id="duration_<?= htmlspecialchars($row['user_status']) ?>" name="duration_<?= htmlspecialchars($row['user_status']) ?>" value="<?= htmlspecialchars($row['duration']) ?>">
+                            </td>
+                            <td>
+                                <input type="text" id="download_speed_<?= htmlspecialchars($row['user_status']) ?>" name="download_speed_<?= htmlspecialchars($row['user_status']) ?>" value="<?= htmlspecialchars($row['download_speed']) ?>">
+                            </td>
+                            <td>
+                                <input type="text" id="price_<?= htmlspecialchars($row['user_status']) ?>" name="price_<?= htmlspecialchars($row['user_status']) ?>" value="<?= htmlspecialchars($row['price']) ?>">
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <div class="button-container">
+                <input type="submit" name="update_limits" value="Update Limits">
+            </div>
+        </form>
 
-    <form method="post">
-        <div class="input-container">
-            <label for="user_status">User Status:</label>
-            <input type="text" id="user_status" name="user_status" required>
-        </div>
-        <div class="input-container">
-            <label for="upload_limit">Total Limit (MB):</label>
-            <input type="number" id="upload_limit" name="upload_limit" required>
-        </div>
-        <div class="input-container">
-            <label for="upload_limit_file">File Limit (MB):</label>
-            <input type="number" id="upload_limit_file" name="upload_limit_file" required>
-        </div>
-        <div class="input-container">
-            <label for="duration">Duration (Days):</label>
-            <input type="number" id="duration" name="duration" >
-        </div>
-		        <div class="input-container">
-            <label for="download_speed">Download Speed (kb/s):</label>
-            <input type="number" id="download_speed" name="download_speed" required>
-        </div>
-        <div class="input-container">
-            <label for="price">Price (€):</label>
-            <input type="number" step="0.01" id="price" name="price" required>
-        </div>
-        <div class="button-container">
-            <input type="submit" name="add_entry" value="Add Entry">
-        </div>
-    </form>
+        <!-- Add Entry Form -->
+        <form method="post">
+            <h2>Add New Entry</h2>
+            <div class="input-container">
+                <label for="user_status">User Status:</label>
+                <input type="text" id="user_status" name="user_status" required>
+            </div>
+            <div class="input-container">
+                <label for="upload_limit">Upload Limit (MB):</label>
+                <input type="text" id="upload_limit" name="upload_limit" required>
+            </div>
+            <div class="input-container">
+                <label for="upload_limit_file">Upload Limit File (MB):</label>
+                <input type="text" id="upload_limit_file" name="upload_limit_file" required>
+            </div>
+            <div class="input-container">
+                <label for="duration">Duration (Days):</label>
+                <input type="text" id="duration" name="duration" required>
+            </div>
+            <div class="input-container">
+                <label for="download_speed">Download Speed (kb/s):</label>
+                <input type="text" id="download_speed" name="download_speed" required>
+            </div>
+            <div class="input-container">
+                <label for="price">Price (€):</label>
+                <input type="text" id="price" name="price" required>
+            </div>
+            <div class="button-container">
+                <input type="submit" name="add_entry" value="Add Entry">
+            </div>
+        </form>
 
-    <form method="post">
-        <div class="input-container">
-            <label for="delete_user_status">User Status to Delete:</label>
-            <input type="text" id="delete_user_status" name="delete_user_status" required>
-        </div>
-        <div class="button-container">
-            <input type="submit" name="delete_entry" value="Delete Entry">
-        </div>
-    </form>
-    <form method="post">
-        <div class="input-container">
-            <label for="email">Update Email Address:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
-        </div>
-        <div class="button-container">
-            <input type="submit" name="update_email" value="Update Email">
-        </div>
-    </form>
+        <!-- Delete Entry Form -->
+        <form method="post">
+            <h2>Delete Entry</h2>
+            <div class="input-container">
+                <label for="delete_user_status">User Status:</label>
+                <input type="text" id="delete_user_status" name="delete_user_status" required>
+            </div>
+            <div class="button-container">
+                <input type="submit" name="delete_entry" value="Delete Entry">
+            </div>
+        </form>
+
+        <!-- Update Email Form -->
+        <form method="post">
+            <h2>Update Email</h2>
+            <div class="input-container">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+            </div>
+            <div class="button-container">
+                <input type="submit" name="update_email" value="Update Email">
+            </div>
+        </form>
     </div>
-</div>
-</main>
-<footer class="footera">
-<center><a class="homelink" href="index.php">HOME</a></center>
-</footer>
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="index.php">Linkpage</a>
+            <a href="../index.php">Home</a>
+        </div>
+        <p>&copy; 2024 Anonfile. All rights reserved.</p>
+    </footer>
 </body>
 </html>

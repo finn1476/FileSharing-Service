@@ -97,131 +97,231 @@ $coupons = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Admin - Coupon Codes</title>
     <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #333;
-    color: #fff;
-}
+        :root {
+            --primary-color: #005f73;
+            --secondary-color: #94d2bd;
+            --accent-color: #ee9b00;
+            --background-color: #f7f9fb;
+            --text-color: #023047;
+            --muted-text-color: #8e9aaf;
+            --border-color: #d9e2ec;
+            --button-color: #56cfe1;
+            --button-hover-color: #028090;
+            --error-color: #e63946;
+            --success-color: #56cfe1;
+        }
 
-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-}
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
 
-.container {
-    background-color: #444;
-    border-radius: 5px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    max-width: 1000px;
-    width: 100%;
-    margin-bottom: 20px;
-}
+        header {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
+        }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
+        header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-input[type="submit"] {
-    background-color: #00f; /* Standard Hintergrundfarbe für andere Buttons */
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 3px;
-    cursor: pointer;
-}
+        nav {
+            display: flex;
+            gap: 20px;
+        }
 
-input[type="submit"]:hover {
-    background-color: #00c; /* Hover-Effekt für andere Buttons */
-}
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+        }
 
-select {
-    padding: 10px;
-    border-radius: 3px;
-    border: 1px solid #ccc;
-    width: calc(100% - 22px);
-    margin-bottom: 10px;
-    background-color: #555;
-    color: #fff;
-}
+        nav a:hover {
+            color: var(--accent-color);
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #555;
-}
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-table, th, td {
-    border: 1px solid #888;
-}
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-.message {
-    color: #f88;
-    font-weight: bold;
-    margin-top: 10px;
-}
+        table, th, td {
+            border: 1px solid var(--border-color);
+        }
 
-.message.success {
-    color: #8f8;
-}
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
 
-.checkbox {
-    transform: scale(1.5);
-    margin-right: 10px;
-}
+        th {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
 
-.center {
-    text-align: center;
-}
+        td {
+            background-color: white;
+        }
 
-th, td {
-    word-wrap: break-word;
-}
+        .success {
+            color: var(--success-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-/* Spezifischer Stil für den Lösch-Button */
-.delete-button {
-    background-color:red; /* Hintergrundfarbe für den Lösch-Button */
-    color:red;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 14px; /* Optionale Schriftgröße für bessere Sichtbarkeit */
-}
+        .error {
+            color: var(--error-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-.delete-button:hover {
-    background-color: #c00; /* Hover-Effekt für den Lösch-Button */
-}
+        form {
+            margin-bottom: 20px;
+        }
 
+        .input-container {
+            margin: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-container label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .input-container input, select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        input[type="submit"] {
+            border: none;
+            background: var(--button-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        input[type="submit"]:hover {
+            background: var(--button-hover-color);
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-top: 3px solid var(--secondary-color);
+        }
+
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        footer .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .delete-button {
+            background: var(--error-color);
+        }
+
+        .delete-button:hover {
+            background: #d62839;
+        }
     </style>
 </head>
 <body>
+<header>
+    <div class="logo">Admin Panel</div>
+    <nav>
+        <a href="adminpanel5.php">Statistiken</a>
+        <a href="adminpanel4.php">Datei-Typen</a>
+        <a href="adminpanel3.php">Benutzer-Verwaltung</a>
+        <a href="adminpanel2.php">Upload-Grenze</a>
+        <a href="admindelete.php">Löschen</a>
+    </nav>
+</header>
 <main>
     <div class="container">
-        <h1>Admin - Create Coupon Codes</h1>
+        <h1>Create Coupon Codes</h1>
         <form method="post">
-            <select name="upload_limit_id" required>
-                <option value="" disabled selected>Select Upload Limit</option>
-                <?php foreach ($uploadLimits as $limit): ?>
-                    <option value="<?php echo htmlspecialchars($limit['id']); ?>">
-                        ID: <?php echo htmlspecialchars($limit['id']); ?> - Limit: <?php echo htmlspecialchars($limit['upload_limit']); ?> MB
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <input type="submit" name="generate_coupon" value="Create Coupon">
+            <div class="input-container">
+                <label for="upload_limit_id">Select Upload Limit</label>
+                <select id="upload_limit_id" name="upload_limit_id" required>
+                    <option value="" disabled selected>Select Upload Limit</option>
+                    <?php foreach ($uploadLimits as $limit): ?>
+                        <option value="<?php echo htmlspecialchars($limit['id']); ?>">
+                            ID: <?php echo htmlspecialchars($limit['id']); ?> - Limit: <?php echo htmlspecialchars($limit['upload_limit']); ?> MB
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="button-container">
+                <input type="submit" name="generate_coupon" value="Create Coupon">
+            </div>
         </form>
 
         <div class="message">
@@ -229,7 +329,7 @@ th, td {
         </div>
 
         <?php if (isset($message)) : ?>
-            <div class="message <?php echo strpos($message, 'successfully') !== false ? 'success' : ''; ?>">
+            <div class="message <?php echo strpos($message, 'successfully') !== false ? 'success' : 'error'; ?>">
                 <?php echo htmlspecialchars($message); ?>
             </div>
         <?php endif; ?>
@@ -238,37 +338,48 @@ th, td {
     <div class="container">
         <h1>Coupon List</h1>
         <table>
-            <tr>
-                <th>ID</th>
-                <th>Code</th>
-                <th>Upload Limit (MB)</th>
-                <th>Distributed</th>
-                <th class="center">Action</th>
-            </tr>
-            <?php foreach ($coupons as $coupon): ?>
+            <thead>
                 <tr>
-                    <td><?php echo htmlspecialchars($coupon['id']); ?></td>
-                    <td><?php echo htmlspecialchars($coupon['code']); ?></td>
-                    <td><?php echo htmlspecialchars($coupon['upload_limit']); ?></td>
-                    <td>
-                        <form method="post" style="display:inline;">
-                            <input type="hidden" name="coupon_id" value="<?php echo htmlspecialchars($coupon['id']); ?>">
-                            <input type="checkbox" name="distributed" class="checkbox" <?php echo $coupon['distributed'] ? 'checked' : ''; ?>>
-                    </td>
-                    <td class="center">
-                            <input type="submit" name="update_coupon_status" value="Save">
-                        </form>
-                        <?php if (!$coupon['distributed']): ?>
+                    <th>ID</th>
+                    <th>Code</th>
+                    <th>Upload Limit (MB)</th>
+                    <th>Distributed</th>
+                    <th class="center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($coupons as $coupon): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($coupon['id']); ?></td>
+                        <td><?php echo htmlspecialchars($coupon['code']); ?></td>
+                        <td><?php echo htmlspecialchars($coupon['upload_limit']); ?></td>
+                        <td>
                             <form method="post" style="display:inline;">
                                 <input type="hidden" name="coupon_id" value="<?php echo htmlspecialchars($coupon['id']); ?>">
-                                <input type="submit" name="delete_coupon" value="Delete" class="delete-button" onclick="return confirm('Are you sure you want to delete this coupon?');">
+                                <input type="checkbox" name="distributed" class="checkbox" <?php echo $coupon['distributed'] ? 'checked' : ''; ?>>
+                        </td>
+                        <td class="center">
+                                <input type="submit" name="update_coupon_status" value="Save">
                             </form>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+                            <?php if (!$coupon['distributed']): ?>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="coupon_id" value="<?php echo htmlspecialchars($coupon['id']); ?>">
+                                    <input type="submit" name="delete_coupon" value="Delete" class="delete-button" onclick="return confirm('Are you sure you want to delete this coupon?');">
+                                </form>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
     </div>
 </main>
+<footer>
+    <div class="footer-links">
+        <a href="index.php">Linkpage</a>
+        <a href="../index.php">Home</a>
+    </div>
+    <p>&copy; 2024 Anonfile. All rights reserved.</p>
+</footer>
 </body>
 </html>

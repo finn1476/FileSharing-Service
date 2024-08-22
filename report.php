@@ -139,127 +139,227 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <title>File Report</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
-    <link rel="stylesheet" type="text/css" href="style.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: black;
-            margin: 0;
-            padding: 0;
-        }
-        footer{
-            font-family: monospace;
-        }
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        .awasr {
-            background-color: black;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-            border:solid 1px white;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        h1 {
-            text-align: center;
-            color: white;
-        }
+      header {
+        background-color: var(--primary-color);
+        padding: 10px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--secondary-color);
+      }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
 
-        label {
-            font-weight: bold;
-        }
+      nav {
+        display: flex;
+        gap: 20px;
+      }
 
-        input,
-        textarea,
-        select,
-        button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-top: 5px;
-        }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
 
-        button {
-            background-color: #4caf50;
-            color: #fff;
-            cursor: pointer;
-        }
-        a{
-            text-decoration:none;
-            color: white;
-        }
-        a:hover{
-            text-decoration:none;
-            color: grey;
-        }
+      nav a:hover {
+        color: var(--accent-color);
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .awasr {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        border: 1px solid var(--border-color);
+      }
+
+      h1 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      input,
+      textarea,
+      select {
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        margin-top: 5px;
+        width: 100%;
+      }
+
+      button {
+        padding: 10px;
+        background-color: var(--button-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--button-hover-color);
+      }
+
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: var(--accent-color);
+      }
+
+      footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
+
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
     </style>
 </head>
-
 <body>
-    <main >
-        <div class="awasr">
-            <h1>File Report</h1>
-            <p>Use this form to report a file.</p>
+<header>
+    <div class="logo">Anonfile</div>
+    <nav>
+        <a href="index.php">Home</a>
+        <a href="pricing.php">Pricing</a>
+        <a href="User/login.php">Login</a>
+    </nav>
+</header>
 
-            <form action="" method="post">
-                <label for="emailInput">Email Address:</label>
-                <input type="email" id="emailInput" name="email" required>
+<main>
+    <div class="awasr">
+        <h1>File Report</h1>
+        <p>Use this form to report a file.</p>
 
-                <label for="reasonInput">Reason:</label>
-                <select id="reasonInput" name="reason" required>
-                    <option hidden selected="true" value="Please select a reason" disabled>Please select a reason</option>
-                    <option value="inappropriate_content">Inappropriate Content</option>
-                    <option value="malicious_file">Malicious File</option>
-                    <option value="copyright_violation">Copyright Violation</option>
-                    <option value="Illegal under German law">Illegal under German law</option>
-                    <option value="Child Porno Pornography">Child Pornography</option>
-                </select>
+        <form action="" method="post">
+            <label for="emailInput">Email Address:</label>
+            <input type="email" id="emailInput" name="email" required>
 
-                <label for="filenameInput">File Name(s) (comma-separated):</label>
-                <input type="text" id="filenameInput" name="filenames" required>
+            <label for="reasonInput">Reason:</label>
+            <select id="reasonInput" name="reason" required>
+                <option hidden selected="true" value="Please select a reason" disabled>Please select a reason</option>
+                <option value="inappropriate_content">Inappropriate Content</option>
+                <option value="malicious_file">Malicious File</option>
+                <option value="copyright_violation">Copyright Violation</option>
+                <option value="Illegal under German law">Illegal under German law</option>
+                <option value="Child Pornography">Child Pornography</option>
+            </select>
 
-                <label for="passwordInput">Decryption Password(s) (comma-separated):</label>
-                <input type="text" id="passwordInput" name="passwords" required>
+            <label for="filenameInput">File Name(s) (comma-separated):</label>
+            <input type="text" id="filenameInput" name="filenames" required>
 
-                <label for="descriptionInput">Description:</label>
-                <textarea id="descriptionInput" name="description" required></textarea>
-                <label for="datenschutz">I agree to the <a href="datenschutz.php">privacy policy</a>:
-                    <input type="checkbox" required name="datenschutz" value="" />
-                </label>
+            <label for="passwordInput">Decryption Password(s) (comma-separated):</label>
+            <input type="text" id="passwordInput" name="passwords" required>
 
-                <?php
-                $datei = fopen("Speicher/reportstatus.csv", "r");
-                $aktiv = fgets($datei, 10);
-                fclose($datei);
+            <label for="descriptionInput">Description:</label>
+            <textarea id="descriptionInput" name="description" required></textarea>
 
-                if ($aktiv == 1) {
-                    echo "<button type='submit'>Submit Report</button>";
-                } else {
-                    echo "<div>Submissions via this form are disabled.</div>";
-                }
-                ?>
-            </form>
-        </div>
-    </main>
-    <footer>
-        <?php include("templates/footer.php"); ?>
-    </footer>
+            <label for="datenschutz">I agree to the <a href="datenschutz.php">privacy policy</a>:
+                <input type="checkbox" required name="datenschutz" value="" />
+            </label>
+
+            <?php
+            $datei = fopen("Speicher/reportstatus.csv", "r");
+            $aktiv = fgets($datei, 10);
+            fclose($datei);
+
+            if ($aktiv == 1) {
+                echo "<button type='submit'>Submit Report</button>";
+            } else {
+                echo "<div>Submissions via this form are disabled.</div>";
+            }
+            ?>
+        </form>
+    </div>
+</main>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="FAQ.php">FAQ</a>
+      <a href="impressum.php">Imprint</a>
+     <a href="abuse.php">Abuse</a>
+	 <a href="terms.php">ToS</a>
+      <a href="datenschutz.php">Privacy Policy</a>
+    </div>
+    <p>&copy; 2024 Anonfile. All rights reserved.</p>
+  </footer>
 </body>
 </html>

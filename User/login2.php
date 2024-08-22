@@ -5,20 +5,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // Validierung der Eingaben
+    // Validate inputs
     if (empty($username) || empty($password)) {
-        die("Benutzername und Passwort dürfen nicht leer sein.");
+        die("Username and password cannot be empty.");
     }
 
-    // Pfad zur .htpasswd-Datei
+    // Path to the .htpasswd file
     $htpasswd_file = __DIR__ . '/password/.htpasswd';
 
-    // Überprüfen, ob die .htpasswd-Datei existiert
+    // Check if the .htpasswd file exists
     if (!file_exists($htpasswd_file)) {
-        die("Keine Benutzer gefunden.");
+        die("No users found.");
     }
 
-    // Lesen der .htpasswd-Datei
+    // Read the .htpasswd file
     $lines = file($htpasswd_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     foreach ($lines as $line) {
@@ -29,106 +29,142 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['username'] = $username;
                 header("Refresh: 5; url=index.php");
                 die("<!DOCTYPE html>
-<html lang='de'>
+<html lang='en'>
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv='X-UA-Compatible' content='ie=edge'>
     <meta name='robots' content='noindex'>
-    <title>Anmeldung Erfolgreich</title>
-    <link rel='stylesheet' href='style.css'>
+    <title>Login Successful</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #fff;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        .awasr {
-            background-color: #444;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        max-width: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
 
-        p {
-            margin-bottom: 10px;
-        }
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      p {
+        margin-bottom: 10px;
+      }
     </style>
 </head>
 <body>
     <main>
         <div class='awasr'>
-            <h2>Anmeldung erfolgreich!</h2>
-            <p>Sie werden in 5 Sekunden weitergeleitet...</p>
+            <h2>Login Successful!</h2>
+            <p>You will be redirected in 5 seconds...</p>
         </div>
     </main>
 </body>
 </html>");
             } else {
                 die("<!DOCTYPE html>
-<html lang='de'>
+<html lang='en'>
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv='X-UA-Compatible' content='ie=edge'>
     <meta name='robots' content='noindex'>
-    <title>Falsches Passwort</title>
-    <link rel='stylesheet' href='style.css'>
+    <title>Incorrect Password</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #fff;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        .awasr {
-            background-color: #444;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        max-width: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
 
-        p {
-            margin-bottom: 10px;
-        }
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      p {
+        margin-bottom: 10px;
+      }
     </style>
 </head>
 <body>
     <main>
         <div class='awasr'>
-            <h2>Falsches Passwort!</h2>
-            <p>Bitte überprüfen Sie Ihre Eingaben.</p>
+            <h2>Incorrect Password!</h2>
+            <p>Please check your credentials.</p>
         </div>
     </main>
 </body>
@@ -138,58 +174,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     die("<!DOCTYPE html>
-<html lang='de'>
+<html lang='en'>
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv='X-UA-Compatible' content='ie=edge'>
     <meta name='robots' content='noindex'>
-    <title>Benutzername nicht gefunden</title>
-    <link rel='stylesheet' href='style.css'>
+    <title>Username Not Found</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #fff;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        .awasr {
-            background-color: #444;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        max-width: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
 
-        p {
-            margin-bottom: 10px;
-        }
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      p {
+        margin-bottom: 10px;
+      }
     </style>
 </head>
 <body>
     <main>
         <div class='awasr'>
-            <h2>Benutzername nicht gefunden!</h2>
-            <p>Bitte überprüfen Sie Ihre Eingaben.</p>
+            <h2>Username Not Found!</h2>
+            <p>Please check your credentials.</p>
         </div>
     </main>
 </body>
 </html>");
 } else {
-    die("Ungültige Anfrage.");
+    die("Invalid request.");
 }
 ?>

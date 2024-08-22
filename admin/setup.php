@@ -169,65 +169,203 @@ EOD;
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Setup</title>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Database Setup</title>
         <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                color: white;
-                background-color: black;
+          :root {
+            --primary-color: #005f73;
+            --secondary-color: #94d2bd;
+            --accent-color: #ee9b00;
+            --background-color: #f7f9fb;
+            --text-color: #023047;
+            --muted-text-color: #8e9aaf;
+            --border-color: #d9e2ec;
+            --button-color: #56cfe1;
+            --button-hover-color: #028090;
+            --error-color: #e63946;
+          }
+
+          body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+          }
+
+          header {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
+          }
+
+          header .logo {
+            font-size: 24px;
+            font-weight: bold;
+          }
+
+          nav {
+            display: flex;
+            gap: 20px;
+          }
+
+          nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+          }
+
+          nav a:hover {
+            color: var(--accent-color);
+          }
+
+          main {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          }
+
+          h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+          }
+
+          .container {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            background-color: var(--background-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-color);
+          }
+
+          input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+          }
+
+          input[type="submit"] {
+            background-color: var(--button-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+          }
+
+          input[type="submit"]:hover {
+            background-color: var(--button-hover-color);
+          }
+
+          @media (max-width: 600px) {
+            nav {
+              flex-direction: column;
+              gap: 10px;
             }
-            .container {
-                max-width: 600px;
-                margin: auto;
-                padding: 20px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                background-color: black;
-            }
-            label {
-                display: block;
-                margin-bottom: 10px;
-            }
-            input[type="text"] {
-                width: 100%;
-                padding: 8px;
-                margin-bottom: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-            input[type="submit"] {
-                background-color: #4caf50;
-                color: black;
-                padding: 10px 15px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-            input[type="submit"]:hover {
-                background-color: #45a049;
-            }
+          }
+		  footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
+
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
+
+      @media (max-width: 600px) {
+        nav {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .footer-links {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
         </style>
     </head>
     <body>
-        <div class="container">
-            <h2>Database Setup</h2>
-            <form method="POST">
-                <label for="host">Database Host:</label>
-                <input type="text" id="host" name="host" value="127.0.0.1" required>
+        <header>
+            <div class="logo">Admin Panel</div>
+            <nav>
+                <a href="adminpanel5.php">Statistiken</a>
+                <a href="adminpanel4.php">Datei-Typen</a>
+                <a href="adminpanel3.php">Benutzer-Verwaltung</a>
+                <a href="adminpanel2.php">Upload-Grenze</a>
+                <a href="admindelete.php">Löschen</a>
+            </nav>
+        </header>
 
-                <label for="dbname">Database Name:</label>
-                <input type="text" id="dbname" name="dbname" required>
+        <main>
+            <div class="container">
+                <h2>Database Setup</h2>
+                <form method="POST">
+                    <label for="host">Database Host:</label>
+                    <input type="text" id="host" name="host" value="127.0.0.1" required>
 
-                <label for="username">Database Administrator Username:</label>
-                <input type="text" id="username" name="username" value="root" required>
+                    <label for="dbname">Database Name:</label>
+                    <input type="text" id="dbname" name="dbname" required>
 
-                <label for="password">Database Administrator Password:</label>
-                <input type="text" id="password" name="password">
+                    <label for="username">Database Administrator Username:</label>
+                    <input type="text" id="username" name="username" value="root" required>
 
-                <input type="submit" value="Create Database">
-            </form>
-        </div>
+                    <label for="password">Database Administrator Password:</label>
+                    <input type="text" id="password" name="password">
+
+                    <input type="submit" value="Create Database">
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <a href="index.php">Linkpage</a>
+                <a href="../index.php">Home</a>
+            </div>
+            <p>&copy; 2024 Anonfile. All rights reserved.</p>
+        </footer>
     </body>
     </html>
     <?php

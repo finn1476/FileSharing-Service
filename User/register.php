@@ -1,5 +1,5 @@
 <?php
-// config.php einbinden
+// Include config.php
 include 'config.php';
 
 function generateRandomString($length = 32) {
@@ -10,132 +10,221 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $username = generateRandomString();
     $password = generateRandomString();
 
-    // Pfad zur .htpasswd-Datei
+    // Path to the .htpasswd file
     $htpasswd_file = __DIR__ . '/password/.htpasswd';
 
-    // Überprüfen, ob das Verzeichnis existiert
+    // Check if the directory exists
     if (!is_dir(__DIR__ . '/password')) {
         if (!mkdir(__DIR__ . '/password', 0755, true)) {
-            die('Fehler beim Erstellen des Verzeichnisses.');
+            die('Error creating the directory.');
         }
     }
 
-    // Überprüfen, ob die Datei schreibbar ist oder erstellt werden kann
+    // Check if the file is writable or can be created
     if (!is_writable($htpasswd_file)) {
         if (file_exists($htpasswd_file)) {
-            die('Die .htpasswd-Datei ist nicht schreibbar.');
+            die('The .htpasswd file is not writable.');
         } else {
             if (file_put_contents($htpasswd_file, "") === false) {
-                die('Fehler beim Erstellen der .htpasswd-Datei.');
+                die('Error creating the .htpasswd file.');
             }
         }
     }
 
-    // Passwort verschlüsseln
+    // Hash the password
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-    // Benutzername und Passwort zur .htpasswd-Datei hinzufügen
+    // Add the username and password to the .htpasswd file
     $htpasswd_entry = "$username:$hashed_password\n";
     if (file_put_contents($htpasswd_file, $htpasswd_entry, FILE_APPEND | LOCK_EX) === false) {
-        die('Fehler beim Schreiben in die .htpasswd-Datei.');
+        die('Error writing to the .htpasswd file.');
     } else {
-        // Nur den Benutzernamen in der Datenbank speichern
+        // Only store the username in the database
         try {
-            // Datenbankverbindung (aus config.php)
+            // Database connection (from config.php)
             global $pdo;
 
-            // SQL-Statement zum Einfügen des Benutzernamens
+            // SQL statement to insert the username
             $sql = "INSERT INTO users (username) VALUES (:username)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':username' => $username
             ]);
 
-            // Erfolgreiches Einfügen
+            // Successful insertion
             echo "<!DOCTYPE html>
-<html lang='de'>
+<html lang='en'>
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv='X-UA-Compatible' content='ie=edge'>
     <meta name='robots' content='noindex'>
-    <title>Registrierung Erfolgreich</title>
-    <link rel='stylesheet' href='style.css'>
+    <title>Registration Successful</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #fff;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        .awasr {
-            background-color: #444;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+      header {
+        background-color: var(--primary-color);
+        padding: 10px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--secondary-color);
+      }
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
 
-        p {
-            margin-bottom: 10px;
-        }
+      nav {
+        display: flex;
+        gap: 20px;
+      }
 
-        button {
-            background-color: #f00;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
 
-        button:hover {
-            background-color: #c00;
-        }
+      nav a:hover {
+        color: var(--accent-color);
+      }
+
+      main {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        max-width: 100%;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        text-decoration: none;
+        background-color: var(--button-color);
+        color: white;
+        border-radius: 5px;
+        margin: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+      .button:hover {
+        background-color: var(--button-hover-color);
+      }
+
+      footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
+
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
     </style>
 </head>
 <body>
+<header>
+    <div class='logo'>Anonfile</div>
+    <nav>
+        <a href='../index.php'>Home</a>
+        <a href='../pricing.php'>Pricing</a>
+        <a href='login.php'>Login</a>
+    </nav>
+</header>
     <main>
         <div class='awasr'>
-            <h2>Registrierung erfolgreich!</h2>
-            <p>Benutzername: <span id='username'>$username</span> <button onclick='copyToClipboard(\"username\")'>Kopieren</button></p>
-            <p>Passwort: <span id='password'>$password</span> <button onclick='copyToClipboard(\"password\")'>Kopieren</button></p>
-            <p><a href='login.php'>Zur Anmeldeseite</a></p>
+            <h2>Registration Successful!</h2>
+            <p>Username: <span id='username'>$username</span> <button class='button' onclick='copyToClipboard(\"username\")'>Copy</button></p>
+            <p>Password: <span id='password'>$password</span> <button class='button' onclick='copyToClipboard(\"password\")'>Copy</button></p>
+            <p><a class='button' href='login.php'>Go to Login Page</a></p>
         </div>
     </main>
+    <footer class='footer'>
+        <div class='footer-links'>
+            <a href='../FAQ.php'>FAQ</a>
+            <a href='../impressum.php'>Imprint</a>
+            <a href='../abuse.php'>Abuse</a>
+            <a href='../terms.php'>ToS</a>
+            <a href='../datenschutz.php'>Privacy Policy</a>
+        </div>
+        <p>&copy; 2024 Anonfile. All rights reserved.</p>
+    </footer>
     <script>
         function copyToClipboard(id) {
             var copyText = document.getElementById(id).innerText;
             navigator.clipboard.writeText(copyText).then(function() {
-                alert('Kopiert: ' + copyText);
+                alert('Copied: ' + copyText);
             }, function(err) {
-                alert('Fehler beim Kopieren: ' + err);
+                alert('Error copying: ' + err);
             });
         }
     </script>
 </body>
 </html>";
-
         } catch (PDOException $e) {
-            die('Fehler beim Einfügen des Benutzernamens in die Datenbank: ' . $e->getMessage());
+            die('Error inserting the username into the database: ' . $e->getMessage());
         }
     }
 } else {
-    echo "Ungültige Anfrage.";
+    echo "Invalid request.";
 }
 ?>

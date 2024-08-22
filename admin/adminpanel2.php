@@ -1,3 +1,4 @@
+
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -95,61 +96,243 @@ $maximalegrossefuerfiles = fread($fiasdle, filesize($csvfilesgrosse));
 $maximalegrossefuerfiles = intval($maximalegrossefuerfiles);
 fclose($fiasdle);
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Panel</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="" />
     <meta name="keywords" content="" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <title>Admin Panel</title>
+    <style>
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+      }
+
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
+
+      main {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        background-color: var(--background-color);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .awasr h1 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .awasr h2 {
+        color: var(--primary-color);
+        font-weight: 500;
+        margin-top: 0;
+      }
+
+      .awasr label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+      }
+
+      .awasr input[type="number"],
+      .awasr input[type="checkbox"] {
+        margin-top: 5px;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .awasr p {
+        margin-top: 20px;
+        font-size: 16px;
+      }
+
+      .awasr input[type="submit"] {
+        background-color: var(--button-color);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .awasr input[type="submit"]:hover {
+        background-color: var(--button-hover-color);
+      }
+
+      .buttona {
+        background-color: var(--button-color);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        margin-right: 10px;
+      }
+
+      .buttona:hover {
+        background-color: var(--button-hover-color);
+      }
+
+      footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
+
+      footer .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
+
+      .maske img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+	        body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
+
+      header {
+        background-color: var(--primary-color);
+        padding: 10px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--secondary-color);
+      }
+
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      nav {
+        display: flex;
+        gap: 20px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      nav a:hover {
+        color: var(--accent-color);
+      }
+    </style>
 </head>
+    <header>
+        <div class="logo">Admin Panel</div>
+        <nav>
+            <a href="adminpanel5.php">Statistiken</a>
+            <a href="adminpanel4.php">Datei-Typen</a>
+            <a href="adminpanel3.php">Benutzer-Verwaltung</a>
+            <a href="adminpanel2.php">Upload-Grenze</a>
+            <a href="admindelete.php">Löschen</a>
+        </nav>
+    </header>
 <body>
     <main>
         <div class="awasr">
             <div><h2>Anonymer File Upload</h2><br></div>
-            <div class="maske"><img src="../bilder/vendetta-g41f352c32_1280-modified.png" alt="Guy Fawkes Mask" class="pictureguy"/></div>
+            
             <h1>Admin Panel</h1>
 
             <!-- Add a form to set maximum file size, allowed file types, and a checkbox -->
-            
-			<p>
-			<form  action="adminpanel2.php" method="POST" name="">
-			<label>Maximale Größe von /Files</label><br>
-			<input type="number" name="grosse" value="<?php echo $maximalegrossefuerfiles / 1048576?>" min="" max="" size="" maxlength="" />
-			<p>Current Maximum size for /Files: <?php echo $maximalegrossefuerfiles / 1048576?> MB</p>
-			<input type="submit" name="updategrose" value="Festlegen">
-			</form>
-			</p>
-			
-<form  action="adminpanel2.php" method="POST" name="">
-<label for="checkboxStatus">Disable / enabel report form:</label>
-                <input type="checkbox" id="checkboxStatus" name="checkboxStatus" value="1" <?php echo $reportStatusFromFile['checkboxStatus'] == 1 ? 'checked' : ''; ?>>
-			 <input type="submit" name="updateStatus" value="Aktivieren/Deaktivieren">
-</form>
-            <p><a class="buttona" href="index.php">Zurück</a>
-            <a class="buttona" href="adminpanel3.php">Nächste Seite</a></p>
-            <a class="buttona" href="index.php">HOME</a></p>
+            <p>
+                <form action="adminpanel2.php" method="POST">
+                    <label>Maximale Größe von /Files (in MB):</label>
+                    <input type="number" name="grosse" value="<?php echo $maximalegrossefuerfiles / 1048576 ?>" min="1" max="100" required />
+                    <p>Current Maximum size for /Files: <?php echo $maximalegrossefuerfiles / 1048576 ?> MB</p>
+                    <input type="submit" name="updategrose" value="Festlegen">
+                </form>
+            </p>
+
+            <p>
+                <form action="adminpanel2.php" method="POST">
+                    <label for="checkboxStatus">Disable / Enable report form:</label>
+                    <input type="checkbox" id="checkboxStatus" name="checkboxStatus" value="1" <?php echo $reportStatusFromFile['checkboxStatus'] == 1 ? 'checked' : ''; ?>>
+                    <input type="submit" name="updateStatus" value="Aktivieren/Deaktivieren">
+                </form>
+            </p>
+
+            <p>
+                <a class="buttona" href="index.php">Zurück</a>
+                <a class="buttona" href="adminpanel3.php">Nächste Seite</a>
+            </p>
+            <a class="buttona" href="index.php">HOME</a>
         </div>
     </main>
 
-    <footer class="footera">
-        <div>
-            <h1 class="right"><a class="bauttona" href="adminpanel5.php">Statistiken</a></h1>
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="index.php">Linkpage</a>
+            <a href="../index.php">Home</a>
         </div>
-        <div>
-            <h1 class="right"><a class="bauttona" href="adminpanel4.php">Datei-Typen</a></h1>
-        </div>
-        <div>
-            <h1 class="right"><a class="bauttona" href="adminpanel3.php">Benutzer-Verwaltung</a></h1>
-        </div>
-        <div>
-            <h1 class="right"><a class="bauttona" href="adminpanel2.php">Upload-Grenze</a></h1>
-        </div>
-        <div>
-            <h1><a class="bauttona" href="admindelete.php">Löschen</a></h1>
-        </div>
+        <p>&copy; 2024 Anonfile. All rights reserved.</p>
     </footer>
 </body>
 </html>

@@ -72,16 +72,15 @@ function deleteFile($filename, $key) {
         $csvFile = '../Speicher/hashes.csv';
 
         if (isHashInCSV($hashValue, $csvFile)) {
-            echo "File is already disabled.";
+            echo "<p class='greena'>File is already disabled.</p>";
         } else {
             // Delete the file
             addToCSV($filename, $decryptedData);
             unlink($fileToDelete);
-            echo "File has been disabled.";
+            echo "<p class='greena'>File has been disabled.</p>";
         }
     } else {
-        echo "<p>Error: The file '$filename' does not exist.</p>";
-        echo "<style>.flexidoxi { display: none; }</style>";
+        echo "<p class='error'>Error: The file '$filename' does not exist.</p>";
     }
 }
 
@@ -98,10 +97,190 @@ function isHashInCSV($hashValue, $csvFile) {
 <html lang="en">
 <head>
     <title>Admin Panel</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
     <meta name="description" content="" />
     <meta name="keywords" content="" />
     <link rel="stylesheet" type="text/css" href="../style.css" />
+    <style>
+        /* CSS styles for the page */
+        :root {
+            --primary-color: #005f73;
+            --secondary-color: #94d2bd;
+            --accent-color: #ee9b00;
+            --background-color: #f7f9fb;
+            --text-color: #023047;
+            --muted-text-color: #8e9aaf;
+            --border-color: #d9e2ec;
+            --button-color: #56cfe1;
+            --button-hover-color: #028090;
+            --error-color: #e63946;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .awasr {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            background-color: var(--background-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .alarm, .error {
+            color: var(--error-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--error-color);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .greena {
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .reda {
+            color: var(--text-color);
+            background-color: var(--error-color);
+            border: 1px solid var(--error-color);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .button-container form {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .button-container button {
+            border: none;
+            padding: 10px 15px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container .green {
+            background-color: var(--button-color);
+        }
+
+        .button-container .green:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .button-container .yellow {
+            background-color: var(--accent-color);
+        }
+
+        .button-container .yellow:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .button-container .red {
+            background-color: var(--error-color);
+        }
+
+        .button-container .red:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .button-container .blue {
+            background-color: var(--button-color);
+        }
+
+        .button-container .blue:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        .button-container .purple {
+            background-color: #6a0dad;
+        }
+
+        .button-container .purple:hover {
+            background-color: #4b0082;
+        }
+
+        .picture-preview {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .preview-container {
+            margin: 20px 0;
+        }
+
+        .audio-preview {
+            width: 100%;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-top: 3px solid var(--secondary-color);
+        }
+
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        footer .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 600px) {
+            footer .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <main>
@@ -123,7 +302,7 @@ function isHashInCSV($hashValue, $csvFile) {
             }
 
             if (in_array(strtolower($fileExtension), $imageExtensions)) {
-                echo "<p>Preview of the file: <br/><img class='picture-preview' src='download_handler.php?filename=$downloadFilename&key=$password' alt='File Preview' ></p>";
+                echo "<p>Preview of the file: <br/><img class='picture-preview' src='download_handler.php?filename=$downloadFilename&key=$password' alt='File Preview'></p>";
             } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
                 echo "<p>Preview of the file:</p>";
                 echo "<div class='preview-container'>";
@@ -142,10 +321,10 @@ function isHashInCSV($hashValue, $csvFile) {
                 $csvFile = '../Speicher/hashes.csv';
 
                 if (isHashInCSV($hashValue, $csvFile)) {
-                    echo "<span class='greena'><center>File is already disabled.</center>";
+                    echo "<div class='greena'>File is already disabled.</div>";
                     $fileDisabled = true;
                 } else {
-                    echo "<span class='reda'> <center>File is not disabled.</center>";
+                    echo "<div class='reda'>File is not disabled.</div>";
                 }
             }
 
@@ -161,12 +340,12 @@ function isHashInCSV($hashValue, $csvFile) {
                     echo "</ul>";
                     $zip->close();
                 } else {
-                    echo "Unable to open the ZIP file.";
+                    echo "<p class='error'>Unable to open the ZIP file.</p>";
                 }
             }
             ?>
 
-            <div class='flexidoxi'>
+            <div class='button-container'>
                 <?php
                 // Display buttons only if the file exists
                 if (file_exists($downloadPath)) {
@@ -190,7 +369,8 @@ function isHashInCSV($hashValue, $csvFile) {
                 }
                 ?>
             </div>
-            <div class='flexidoxi'>
+
+            <div class='button-container'>
                 <?php
                 // Display buttons only if the file exists and is not disabled
                 if (file_exists($downloadPath)){
@@ -213,32 +393,34 @@ function isHashInCSV($hashValue, $csvFile) {
                 ?>
             </div>
         </div>
+
         <?php
         if (!file_exists($downloadPath)) {
             echo "<div class='cdaiwjd'><a class='buttona' href='admindelete.php'>ADMIN</a></div>";
         }
         ?>
     </main>
+
     <?php
     if (!file_exists($downloadPath)) {
         echo "<footer class='footera'>
-        <div>
-        <h1 class='right'><a class='bauttona' href='adminpanel5.php'>Statistiken</a></h1>
-        </div>
-        <div>
-        <h1 class='right'><a class='bauttona' href='adminpanel4.php'>Datei-Typen</a></h1>
-        </div>
-        <div>
-        <h1 class='right'><a class='bauttona' href='adminpanel3.php'>Benutzer-Verwaltung</a></h1>
-        </div>
-        <div>
-        <h1 class='right'><a class='bauttona' href='adminpanel2.php'>Upload-Grenze</a></h1>
-        </div>
-        <div>
-        <h1><a class='bauttona' href='admindelete.php'>Löschen</a></h1>
-        </div>";
+            <div>
+                <a class='buttona' href='adminpanel5.php'>Statistiken</a>
+            </div>
+            <div>
+                <a class='buttona' href='adminpanel4.php'>Datei-Typen</a>
+            </div>
+            <div>
+                <a class='buttona' href='adminpanel3.php'>Benutzer-Verwaltung</a>
+            </div>
+            <div>
+                <a class='buttona' href='adminpanel2.php'>Upload-Grenze</a>
+            </div>
+            <div>
+                <a class='buttona' href='admindelete.php'>Löschen</a>
+            </div>
+        </footer>";
     }
     ?>
-    </footer>
 </body>
 </html>

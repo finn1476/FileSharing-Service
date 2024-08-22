@@ -196,10 +196,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
 
     // Check for file upload errors
     if ($file["error"] === UPLOAD_ERR_OK) {
-		  global $pdo;
-		   // Initialize upload limit
+        global $pdo;
+        // Initialize upload limit
         $uploadLimit = 0;
- // Check if the user is logged in
+
+        // Check if the user is logged in
         if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['username'])) {
             // Get the user's ID from the session
             $username = $_SESSION['username'];
@@ -214,16 +215,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                 // Get the user's upload limit
                 $uploadLimit = getUserUploadLimit($pdo, $userId);
             } else {
-                echo "User not found.";
+                echo "<div class='alert error'>User not found.</div>";
                 exit();
             }
         } else {
             // Handle case for non-logged in users
-            // This section can be customized based on your anonymous upload limits setup
             $uploadLimit = getAnonymousUploadLimit($pdo);
         }
-		if ($file["size"] > $uploadLimit) {
-            echo "The file is too large. Please select a file that is not larger than " . ($uploadLimit / 1048576) . " MB.";
+
+        if ($file["size"] > $uploadLimit) {
+            echo "<div class='alert error'>The file is too large. Please select a file that is not larger than " . ($uploadLimit / 1048576) . " MB.</div>";
             exit();
         }
 
@@ -248,7 +249,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                 // Check if the hash value of the uploaded file is already in the CSV file
                 if (in_array($fileHash, $existingHashes)) {
                     // If the hash is found in the CSV, it means the file is disabled
-                    echo "File is disabled.";
+                    echo "<div class='alert warning'>File is disabled.</div>";
                     exit(); // Stop further execution
                 }
 
@@ -285,7 +286,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                             // Update user upload size with the size of the encrypted file
                             try {
                                 updateUserUploadSize($pdo, $userId, $encryptedFileSize);
-                                
+
                                 // Move the file to the final destination
                                 rename($tempDestination, $destination);
 
@@ -294,15 +295,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                                 if (($handle = fopen($statusUploadFile, 'r')) !== false) {
                                     $status = fgetcsv($handle)[0]; // Read the first value
                                     fclose($handle);
-										$filesCsv = 'Uploaded_Files/files.csv';
-                                        addFileNameAndUsernameToCsv($filesCsv, $randomName, $username);
+                                    $filesCsv = 'Uploaded_Files/files.csv';
+                                    addFileNameAndUsernameToCsv($filesCsv, $randomName, $username);
                                     if ($status == 1) {
                                         // Add the file name to uploaded_files.csv
                                         $uploadedFilesCsv = 'Uploaded_Files/uploaded_files.csv';
                                         addFileNameToCsv($uploadedFilesCsv, $randomName);
-
-                                        // Add the file name and username to files.csv
-                                        
                                     }
                                 }
 
@@ -310,24 +308,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                                 $downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
                                 $downloadLink2 = "$currentDomain/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
 
-                                echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
-                                echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
-                                echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
-                                echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
+
+                               echo "<div class='button-container'>";
+echo "<a id='downloadLink' href='$downloadLink' class='button'>Visit the download page</a>";
+echo "<button onclick='copyToClipboard()' class='button'>Copy the link</button>";
+echo "</div>";
                             } catch (Exception $e) {
                                 // Remove the temp file if something went wrong
                                 if (file_exists($tempDestination)) {
                                     unlink($tempDestination);
                                 }
                                 // Provide a user-friendly message in English
-                                echo "Your storage limit has been exceeded. Please free up some space or buy some more.";
+                                echo "<div class='alert error'>Your storage limit has been exceeded. Please free up some space or buy some more.</div>";
                                 exit();
                             }
                         } else {
-                            echo "User not found.";
+                            echo "<div class='alert error'>User not found.</div>";
                         }
                     } catch (PDOException $e) {
-                        echo 'Database error: ' . $e->getMessage();
+                        echo "<div class='alert error'>Database error: " . $e->getMessage() . "</div>";
                     }
                 } else {
                     // No active session, use the anonymous upload limit
@@ -367,25 +366,75 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file1"])) {
                         // Provide download link
                         $downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
                         $downloadLink2 = "$currentDomain/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
-
-                        echo "<span class=\"fasdasd\">The file has been successfully uploaded and renamed to</span><br><br>";
-                        echo "<center><a id=\"downloadLink\" href=\"$downloadLink\">Visit the download page</a><br></center>";
-                        echo "<input type=\"hidden\" id=\"downloadLinkText\" value=\"$downloadLink2\"><br>";
-                        echo "<center><button onclick=\"copyToClipboard()\">Copy the link</button></center>";
+echo "<div class='button-container'>";
+echo "<a id='downloadLink' href='$downloadLink' class='button'>Visit the download page</a>";
+echo "<button onclick='copyToClipboard()' class='button'>Copy the link</button>";
+echo "</div>";
                     } else {
-                        echo "The file is too large. Please select a file that is not larger than " . ($anonymousUploadLimit / 1048576) . " MB.";
+                        echo "<div class='alert error'>The file is too large. Please select a file that is not larger than " . ($anonymousUploadLimit / 1048576) . " MB.</div>";
                     }
                 }
             } else {
-                echo "Invalid file format. Allowed formats: " . implode(", ", $allowedExtensions);
+                echo "<div class='alert error'>Invalid file format. Allowed formats: " . implode(", ", $allowedExtensions) . "</div>";
             }
         } else {
-            echo "The file is too large. Please select a file that is not larger than " . ($maximumFileSize / 1048576) . " MB.";
+            echo "<div class='alert error'>The file is too large. Please select a file that is not larger than " . ($maximumFileSize / 1048576) . " MB.</div>";
         }
     } else {
-        echo "Error while uploading the file: " . $file["error"];
+        echo "<div class='alert error'>Error while uploading the file: " . $file["error"] . "</div>";
     }
 } else {
-    echo "No file selected for upload.";
+    echo "<div class='alert warning'>No file selected for upload.</div>";
 }
 ?>
+
+<!-- Styling for the alerts and buttons -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        text-align: center;
+        
+    }
+    .alert {
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    .alert.success {
+        background-color: #dff0d8;
+        color: #3c763d;
+    }
+    .alert.error {
+        background-color: #f2dede;
+        color: #a94442;
+    }
+    .alert.warning {
+        background-color: #fcf8e3;
+        color: #8a6d3b;
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px; /* Abstand zwischen den Buttons */
+    }
+    .button {
+        background-color: #5bc0de;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    .button:hover {
+        background-color: #31b0d5;
+    }
+</style>

@@ -133,8 +133,6 @@ if (isset($_POST['coupon_code'])) {
     }
 }
 
-
-
 // Hole alle Upload-Limits aus der Datenbank für das Dropdown-Menü
 $sql = "SELECT id, upload_limit FROM file_upload_limits";
 $stmt = $pdo->prepare($sql);
@@ -161,140 +159,219 @@ if ($expirationDate === false || $expirationDate === NULL) {
     <meta name="robots" content="noindex">
     <title>Geschützter Bereich</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #fff;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        .container {
-            background-color: #444;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+      header {
+        background-color: var(--primary-color);
+        padding: 10px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--secondary-color);
+      }
 
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
 
-        h2 {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
+      nav {
+        display: flex;
+        gap: 20px;
+      }
 
-        .logout {
-            margin-top: 20px;
-        }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
 
-        .logout a {
-            color: #f88;
-            text-decoration: none;
-        }
+      nav a:hover {
+        color: var(--accent-color);
+      }
 
-        .logout a:hover {
-            text-decoration: underline;
-        }
+      main {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+      }
 
-        .delete-button {
-            background-color: #f00;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+      }
 
-        .delete-button:hover {
-            background-color: #c00;
-        }
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        max-width: 100%;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
 
-        /* Canvas Styles */
-        .chart-container {
-            margin: 20px auto;
-            max-width: 600px;
-            position: relative;
-        }
+      .maske {
+        margin-bottom: 20px;
+      }
 
-        canvas {
-            background-color: #555;
-            border-radius: 5px;
-        }
+      .abusetextwidth {
+        text-align: left;
+        margin-bottom: 20px;
+      }
 
-        /* Gutschein-Formular */
-        .coupon-form {
-            margin-top: 20px;
-        }
+      .emailbutton {
+        display: inline-block;
+        padding: 10px 20px;
+        text-decoration: none;
+        background-color: var(--button-color);
+        color: white;
+        border-radius: 5px;
+        margin: 5px;
+        transition: background-color 0.3s ease;
+      }
 
-        .coupon-form input[type="text"] {
+      .emailbutton:hover {
+        background-color: var(--button-hover-color);
+      }
+
+      footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
+
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
+	    input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
             padding: 10px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-            width: calc(100% - 22px);
             margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
-        .coupon-form input[type="submit"] {
-            background-color: #00f;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 3px;
+        input[type="submit"] {
+            background-color: var(--button-color);
+            color: white;
             cursor: pointer;
         }
 
-        .coupon-form input[type="submit"]:hover {
-            background-color: #00c;
+        input[type="submit"]:hover {
+            background-color: var(--button-hover-color);
         }
 
-        .message {
-            color: #f88;
-            font-weight: bold;
-            margin-top: 10px;
+        .hidden {
+            display: none;
         }
 
-        .message.success {
-            color: #8f8;
+        .deactivated-message {
+            background-color: var(--error-color);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
         }
-		.back{
-			text-decoration:none;
-			background-color:blue;
-			color:white;
-			padding:0.5rem;
-			border-radius:0.25rem;
-		}
+		      .container {
+        background-color: white;
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+      }
+	  .back{
+		  width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+			            background-color: var(--button-color);
+            color: white;
+            cursor: pointer;
+			 text-decoration: none;
+	  }
+	  	  .back:hover{
+		 
+            border: 1px solid var(--border-color);
+			background-color: var(--button-hover-color);
+            color: white;
+            cursor: pointer;
+			text-decoration: none;
+	  }
     </style>
 </head>
 <body>
+<header>
+    <div class="logo">Anonfile</div>
+    <nav>
+        <a href="../index.php">Home</a>
+        <a href="../pricing.php">Pricing</a>
+        <a href="login.php">Login</a>
+    </nav>
+</header>
 <main>
     <div class="container">
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
         <h2>Your Total Storage Usage: <?php echo number_format($totalSizeMB, 2); ?> MB</h2>
         <h2>Your Maximum Storage Limit: <?php echo number_format($uploadLimitMB, 2); ?> MB</h2>
-		 <h2>Your subscription expires on: <?php echo $expirationDate; ?></h2> <!-- Ablaufdatum anzeigen -->
-
+        <h2>Your subscription expires on: <?php echo $expirationDate; ?></h2>
+<center>
         <div class="chart-container">
             <canvas id="storageChart" width="400" height="200"></canvas>
         </div>
-
-<form method="post" class="coupon-form">
-    <input type="text" name="coupon_code" placeholder="Enter coupon code" required>
-    <input type="submit" value="Redeem Coupon"><br><br>
-    <a class="back" href="index.php">Back</a>
-</form>
-
+</center>
+        <form method="post" class="coupon-form">
+            <input type="text" name="coupon_code" placeholder="Enter coupon code" required>
+            <input type="submit" value="Redeem Coupon"><br><br>
+            <a class="back" href="index.php">Back</a>
+        </form>
 
         <?php if (isset($successMessage)) : ?>
             <div class="message success"><?php echo htmlspecialchars($successMessage); ?></div>
@@ -302,9 +379,18 @@ if ($expirationDate === false || $expirationDate === NULL) {
             <div class="message"><?php echo htmlspecialchars($errorMessage); ?></div>
         <?php endif; ?>
 
-
     </div>
 </main>
+<footer class="footer">
+    <div class="footer-links">
+      <a href="../FAQ.php">FAQ</a>
+      <a href="../impressum.php">Imprint</a>
+      <a href="../abuse.php">Abuse</a>
+      <a href="../terms.php">ToS</a>
+      <a href="../datenschutz.php">Privacy Policy</a>
+    </div>
+    <p>&copy; 2024 Anonfile. All rights reserved.</p>
+</footer>
 <script>
     // JavaScript to draw the storage usage chart
     var canvas = document.getElementById('storageChart');
@@ -331,6 +417,5 @@ if ($expirationDate === false || $expirationDate === NULL) {
     ctx.fillText('Used: ' + used.toFixed(2) + ' MB', canvas.width / 4, canvas.height / 2);
     ctx.fillText('Remaining: ' + remaining.toFixed(2) + ' MB', (canvas.width / 4) * 3, canvas.height / 2);
 </script>
-
 </body>
 </html>

@@ -39,57 +39,153 @@ if (is_array($maxFileSize)) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="robots" content="noindex">
     <title>Frequently Asked Questions</title>
-    <link rel="stylesheet" href="style.css">
+
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-        main {
-            text-align: center;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
-        .awasr {
-            border: 1px solid #ccc;
-            padding: 20px;
-            max-width: 600px;
-            width: 100%;
-        }
+      header {
+        background-color: var(--primary-color);
+        padding: 10px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--secondary-color);
+      }
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
 
-        li {
-            text-align: left;
-            margin-bottom: 10px;
-        }
+      nav {
+        display: flex;
+        gap: 20px;
+      }
 
-        h2 {
-            margin-bottom: 20px;
-        }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      nav a:hover {
+        color: var(--accent-color);
+      }
+
+      main {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
         
+      }
+
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .awasr {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        max-width: 100%;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        text-align: left;
+        margin-bottom: 20px;
+      }
+
+      li h3 {
+        color: var(--primary-color);
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+
+      li p {
+        margin: 0;
+        color: var(--text-color);
+      }
+
+      footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
+
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
     </style>
 </head>
 <body>
+<header>
+    <div class="logo">Anonfile</div>
+    <nav>
+        <a href="index.php">Home</a>
+        <a href="pricing.php">Pricing</a>
+        <a href="User/login.php">Login</a>
+    </nav>
+</header>
+
 <main>
     <div class="awasr">
-        <div>
-            <h2>Frequently Asked Questions (FAQ)</h2><br>
-        </div>
-        <div class="maske">
-            <img src="bilder\vendetta-g41f352c32_1280-modified.png" alt="Guy Fawkes Mask" class="pictureguy"/>
-        </div>
+        <h2>Frequently Asked Questions (FAQ)</h2>
 
         <ul>
             <li>
                 <h3>Do you have any download restrictions?</h3>
-                <p>- We do not have any bandwidth limitations in place.</p>
+                <p>- Yes, <a href="pricing.php">Pricing</a></p>
             </li>
             <li>
                 <h3>How long will I be able to access my files?</h3>
@@ -104,10 +200,20 @@ if (is_array($maxFileSize)) {
                 <p>- Yes, <a href="pricing.php">Pricing</a></p>
             </li>
         </ul>
-        <footer>
-            <?php include("templates/footer.php"); ?>
-        </footer>
+
+
     </div>
 </main>
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="FAQ.php">FAQ</a>
+      <a href="impressum.php">Imprint</a>
+     <a href="abuse.php">Abuse</a>
+	 <a href="terms.php">ToS</a>
+      <a href="datenschutz.php">Privacy Policy</a>
+    </div>
+    <p>&copy; 2024 Anonfile. All rights reserved.</p>
+  </footer>
+
 </body>
 </html>
