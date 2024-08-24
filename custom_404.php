@@ -175,14 +175,14 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">Anonfile</div>
-        <nav>
-            <a href="index.php">Home</a>
-            <a href="pricing.php">Pricing</a>
-            <a href="User/login.php">Login</a>
-        </nav>
-    </header>
+<header>
+    <div class="logo">Anonfile</div>
+<?php
+
+include("templates/header.php");	
+	
+?>
+</header>
 
     <main>
         <div class="awasr">

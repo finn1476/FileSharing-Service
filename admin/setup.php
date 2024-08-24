@@ -76,6 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             upload_limit_expiration_date date DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+        CREATE TABLE urls (
+            id int(11) NOT NULL,
+            short_code varchar(6) NOT NULL,
+            original_url text NOT NULL,
+            created_at timestamp NOT NULL DEFAULT current_timestamp(),
+            wait_time int(11) DEFAULT 5,
+            user_id int(11) DEFAULT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
         ALTER TABLE configuration
             ADD PRIMARY KEY (id);
 
@@ -98,6 +107,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ADD PRIMARY KEY (id),
             ADD KEY file_upload_limit_id (file_upload_limit_id);
 
+        ALTER TABLE urls
+            ADD PRIMARY KEY (id),
+            ADD KEY fk_user (user_id);
+
         ALTER TABLE configuration
             MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
@@ -116,6 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ALTER TABLE users
             MODIFY id int(11) NOT NULL AUTO_INCREMENT;
 
+        ALTER TABLE urls
+            MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+
         ALTER TABLE coupons
             ADD CONSTRAINT coupons_ibfk_1 FOREIGN KEY (file_upload_limit_id) REFERENCES file_upload_limits (id);
 
@@ -124,6 +140,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         ALTER TABLE users
             ADD CONSTRAINT fk_file_upload_limit FOREIGN KEY (file_upload_limit_id) REFERENCES file_upload_limits (id);
+
+        ALTER TABLE urls
+            ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL;
         ";
 
         $pdo->exec($createTablesQuery);
@@ -287,43 +306,43 @@ EOD;
               gap: 10px;
             }
           }
-		  footer {
-        background-color: var(--primary-color);
-        padding: 20px;
-        color: white;
-        text-align: center;
-        border-top: 3px solid var(--secondary-color);
-      }
+          footer {
+            background-color: var(--primary-color);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-top: 3px solid var(--secondary-color);
+          }
 
-      footer .footer-links {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 10px;
-      }
+          footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+          }
 
-      footer .footer-links a {
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        transition: color 0.3s ease;
-      }
+          footer .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+          }
 
-      footer .footer-links a:hover {
-        color: var(--accent-color);
-      }
+          footer .footer-links a:hover {
+            color: var(--accent-color);
+          }
 
-      @media (max-width: 600px) {
-        nav {
-          flex-direction: column;
-          gap: 10px;
-        }
+          @media (max-width: 600px) {
+            nav {
+              flex-direction: column;
+              gap: 10px;
+            }
 
-        .footer-links {
-          flex-direction: column;
-          gap: 10px;
-        }
-      }
+            .footer-links {
+              flex-direction: column;
+              gap: 10px;
+            }
+          }
         </style>
     </head>
     <body>

@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 session_start();
 error_reporting(E_ALL);
@@ -89,6 +88,7 @@ $warn_config_value = function ($ini_name, $var_name, $var_val) {
 
 $uploadMaxFilesize = ini_get('upload_max_filesize');
 ?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -326,14 +326,14 @@ $uploadMaxFilesize = ini_get('upload_max_filesize');
     </style>
 </head>
 <body>
-  <header>
+<header>
     <div class="logo">Anonfile</div>
-    <nav>
-      <a href="index.php">Home</a>
-      <a href="pricing.php">Pricing</a>
-      <a href="User/login.php">Login</a>
-    </nav>
-  </header>
+<?php
+
+include("templates/header.php");	
+	
+?>
+</header>
 
   <main>
     <center><h2>File Upload</h2></center>
@@ -450,6 +450,19 @@ function copyToClipboard() {
 }
     // Display the cookie banner
     showCookieBanner();
+    function copyToClipboard() {
+        console.log('Download link:', downloadLink); // Debug line
+        if (downloadLink) {
+            navigator.clipboard.writeText(downloadLink).then(function() {
+                alert("Link copied to clipboard!");
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+            });
+        } else {
+            console.error('Download link is not defined.');
+        }
+    }
+    // 
   </script>
 </body>
 </html>

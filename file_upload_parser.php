@@ -387,6 +387,30 @@ echo "</div>";
     echo "<div class='alert warning'>No file selected for upload.</div>";
 }
 ?>
+<?php
+// Ensure this part is executed where variables are properly set
+$downloadLink = "/download.php?filename=$randomName&key=" . urlencode($encryptionKey);
+$downloadLink = htmlspecialchars($downloadLink, ENT_QUOTES, 'UTF-8');
+?>
+
+<script>
+    // Pass the PHP variable to JavaScript
+    var downloadLink = "<?php echo $downloadLink; ?>";
+
+    function copyToClipboard() {
+        console.log('Download link:', downloadLink); // Debug line
+        if (downloadLink) {
+            navigator.clipboard.writeText(downloadLink).then(function() {
+                alert("Link copied to clipboard!");
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+            });
+        } else {
+            console.error('Download link is not defined.');
+        }
+    }
+</script>
+
 
 <!-- Styling for the alerts and buttons -->
 <style>
@@ -438,3 +462,5 @@ echo "</div>";
         background-color: #31b0d5;
     }
 </style>
+
+

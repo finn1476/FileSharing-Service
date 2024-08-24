@@ -1,359 +1,229 @@
-html, main {
-  overflow-x:hidden;
-}
+    <style>
+      :root {
+        --primary-color: #005f73;
+        --secondary-color: #94d2bd;
+        --accent-color: #ee9b00;
+        --background-color: #f7f9fb;
+        --text-color: #023047;
+        --muted-text-color: #8e9aaf;
+        --border-color: #d9e2ec;
+        --button-color: #56cfe1;
+        --button-hover-color: #028090;
+        --error-color: #e63946;
+      }
 
-#downloadLink {
-  margin-right: 20px;
-  border: none;
-  background: #4e595d;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-  text-decoration: none;
-  text-align: center;
-  padding: 1rem 4rem;
-}
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
 
+      header {
+        background-color: var(--primary-color);
+        padding: 10px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid var(--secondary-color);
+      }
 
-#fasdasd {
-  margin: 2rem;
-}
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
 
-html {
-  font-family: monospace;
-  background: #121212;
-  color: white;
-}
+      nav {
+        display: flex;
+        gap: 20px;
+      }
 
-input[type="button"],
-input[type="submit"],
-::file-selector-button {
-  margin-right: 20px;
-  border: none;
-  background: #4e595d;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-}
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
 
-input[type="button"],
-input[type="submit"],
-::file-selector-button:hover {
-  background: #6b787d;
-}
-input[type="file"]:hover,
-::file-selector-button:hover {
-  background: #6b787d; /* Helleres Grau beim Überfahren: Rot 107, Grün 120, Blau 125 */
-}
-.awasr {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding-top: 1.6%;
-}
+      nav a:hover {
+        color: var(--accent-color);
+      }
 
-.pictureguy {
-  height: auto;
-  width: 10%;
-}
+      main {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		padding-left:5rem;
+		padding-right:5rem;
+      }
 
-.maske {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 1.5%;
-}
+      h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
 
-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 3.5rem;
-  font-size: 0.65rem;
-  border-top: 1px solid grey;
-}
+      .upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--background-color);
+        padding: 3.5rem;
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        transition: border-color 0.3s ease;
+        text-align: center;
+      }
 
-.footera {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+      .upload-container:hover {
+        border-color: var(--accent-color);
+      }
 
-.right {
-  padding-right: 5rem;
-}
-input[type="file"] {
-  margin-right: 20px;
-  border: none;
-  background: #0d45a5; /* Hintergrundfarbe ändern */
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-}
+      .progress-wrapper {
+        width: 100%;
+        margin-bottom: 20px;
+      }
 
-input[type="file"]:hover {
-  background: #084cdf; /* Farbe beim Überfahren ändern */
-}
-.awasr {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Hier wird die Ausrichtung auf das Zentrum gesetzt */
-  padding-top: 1.6%;
-}
+      progress {
+        width: 100%;
+        height: 20px;
+        border-radius: 5px;
+        overflow: hidden;
+        border: none;
+        background-color: var(--border-color);
+      }
 
-.pictureguy {
-  height: auto;
-  width: 10%;
-}
+      .progress-text {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        font-size: 14px;
+        color: var(--muted-text-color);
+      }
 
-.maske {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 1.5%;
-}
+      .custom-file-upload {
+        cursor: pointer;
+        background-color: var(--button-color);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 5px;
+        border: none;
+        font-size: 18px;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
 
-.upload-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+      .custom-file-upload:hover {
+        background-color: var(--button-hover-color);
+      }
 
-input[type="file"] {
-  margin-right: 20px;
-  border: none;
-  background: #4e595d;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-}
+      .upload-icon {
+        font-size: 24px;
+      }
 
-input[type="file"]:hover {
-  background: #6b787d;
-}
-.buttona {
-  color: white;
-  text-decoration: none;
-  background-color: #4e595d;
-  padding: 10px 20px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  margin-top: 1.5rem;
-}
+      #status {
+        font-weight: bold;
+      }
 
-.buttona:hover {
-  background-color: rgb(5, 32, 41);
-}
-.bauttona:hover {
-  color:grey;
+      footer {
+        background-color: var(--primary-color);
+        padding: 20px;
+        color: white;
+        text-align: center;
+        border-top: 3px solid var(--secondary-color);
+      }
 
-}
-.bauttona {
-  color:white;
-  text-decoration: none;
-}
-input[type="file"]::-webkit-file-upload-button {
-  /* WebKit-Browser (wie Chrome, Safari) */
-  visibility: hidden;
-  opacity: 0;
-}
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
 
-input[type="file"]::before {
-  content: 'Durchsuchen'; /* Hier kannst du den gewünschten Platzhaltertext einfügen */
-  display: inline-block;
-  background: #4e595d; /* Dunkelgrau: Rot 78, Grün 89, Blau 93 */
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  border: none;
-  margin-right: 20px;
-  transition: background .2s ease-in-out;
-}
+      footer .footer-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
 
-input[type="file"]:hover::before {
-  background: #6b787d; /* Helleres Grau beim Überfahren: Rot 107, Grün 120, Blau 125 */
-}
-input[type="file"]::-webkit-file-upload-button {
-  /* WebKit-Browser (wie Chrome, Safari) */
-  visibility: hidden;
-  opacity: 0;
-}
+      footer .footer-links a:hover {
+        color: var(--accent-color);
+      }
 
-.custom-file-upload {
-  display: inline-block;
-  background: #4e595d; /* Dunkelgrau: Rot 78, Grün 89, Blau 93 */
-  border-radius: 0.35rem;
-  color: #fff;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-  padding: 1rem 8.5rem;
-  margin-top:1rem;
-}
+      .donation-section {
+        text-align: center;
+        margin-top: 40px;
+      }
 
-/* Ändere die Hintergrundfarbe beim Überfahren */
-.custom-file-upload:hover {
-  background: #6b787d; /* Helleres Grau beim Überfahren: Rot 107, Grün 120, Blau 125 */
-}
+      .donation-section .divider {
+        display: inline-block;
+        border-bottom: 2px solid var(--border-color);
+        width: 80px;
+        margin: 0 10px;
+      }
 
-/* Verstecke den Standard-Button */
-input[type="file"] {
-  display: none;
-}
-.divfooter {
-  display: flex;
-  justify-content: center; /* Hier wird der Abstand zwischen den Links eingestellt */
-  align-items: center;
-  height: 100%;
-}
-.footerlinks {
-  text-decoration: none;
-  color: white;
-  margin: 0 1rem;
-}
-@media screen and (max-width: 950px) {
-  .divfooter {
-    font-size: 0.5rem;
-  }
+      .donation-section span {
+        font-size: 18px;
+        color: var(--muted-text-color);
+        margin: 0 10px;
+      }
 
-  .footerlinks {
-    margin: 0 0.20rem; /* Auf Handys die Margin entfernen */
-     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-  }
-}
+      .monero-address {
+        background-color: var(--secondary-color);
+        padding: 10px;
+        border-radius: 5px;
+        display: inline-block;
+        font-family: monospace;
+        color: white;
+        margin-top: 10px;
+      }
 
-.footerlinks:hover{
-  color: grey;
-  transition: 0.5s;
-}
+      #cookieBanner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--text-color);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        display: none;
+        z-index: 9999;
+      }
 
-.emailbutton{
-  color:white;
-  text-decoration: none;
-  background-color: #4e595d;
-  padding: 1rem;
-  border-radius: 0.5rem;
+      #cookieBanner button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: var(--button-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
 
-}
-.emailbutton:hover{
-  background-color: #4e595d1e;
-  transition: background-color 0.3s ease;
-}
+      #cookieBanner button:hover {
+        background-color: var(--button-hover-color);
+      }
 
-.awasr {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  padding-top: 3rem; /* Erhöhen Sie den Abstand oben für die Vorschau */
-}
-
-.preview-container {
-    max-width: 100%;
-    max-height: 50vh; /* Beispiel: Begrenzen Sie die Höhe auf 70% der Bildschirmhöhe */
-    overflow: hidden;
-}
-
-
-.picture-preview {
-   max-width: 100%;
-    max-height: 50vh; /* Beispiel: Begrenzen Sie die Höhe auf 70% der Bildschirmhöhe */
-    overflow: hidden;
-}
-
-/* Fügen Sie eine Klasse für den Text unter der Vorschau hinzu */
-.preview-text {
-    margin-top: 1rem; /* Sie können diesen Abstand je nach Bedarf anpassen */
-    color: white;
-    text-align: center; /* Zentrieren Sie den Text */
-}
-.green{
-	color:white;
-	background-color:green;
-	border-color:green;
-	padding:3rem;
-}
-.yellow{
-	color:white;
-	background-color:yellow;
-	border-color:yellow;
-	padding:3rem;
-	text-shadow: 0 0 5px black;
-}
-.red{
-	color:white;
-	background-color:red;
-	border-color:red;
-	padding:3rem;
-}
-.blue{
-	color:white;
-	background-color:blue;
-	border-color:blue;
-	padding:3rem;
-}
-.purple{
-	color:white;
-	background-color:purple;
-	border-color:purple;
-	padding:3rem;
-	padding-right:1rem;
-}
-.reda{
-	color:white;
-	background-color:red;
-	border-color:red;
-	padding:3rem;
-}
-.greena{
-		color:white;
-	background-color:green;
-	border-color:green;
-	padding:3rem;
-}
-.green:hover{
-	background-color:#7FFF00;
-	border-color:#7FFF00;
-
-}
-.yellow:hover{
-	background:#FFD700;
-	border-color:#FFD700;
-}
-.red:hover{
-	background:#B22222;
-	border-code:#B22222;
-}
-.blue:hover{
-	background:#191970;
-	border-color:#191970;
-}
-.purple:hover{
-	background:#663399;
-	border-color:#663399;
-}
-.flexidoxi{
-	display:flex;
-	border:solid white 1px;
-}
-.alarm{
-	background:red;
-	color:white;
-	padding:1rem;
-}
-.cdaiwjd{
-	display:flex;
-	justify-content:center;
-	align-items:center;
-}
-.awijdaowd{
-	display:flex;
-}
+      @media (max-width: 600px) {
+        nav {
+          flex-direction: column;
+        }
+      }
+      
+      input[type="file"] {
+        display: none;
+      }
+    </style>

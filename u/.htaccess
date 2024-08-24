@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /u/
+
+# Leite alle Anfragen, die nicht auf existierende Dateien oder Verzeichnisse abzielen, an redirect.php weiter
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9]{6})$ redirect.php?code=$1 [L,QSA]

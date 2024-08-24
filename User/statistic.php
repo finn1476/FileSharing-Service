@@ -349,12 +349,14 @@ if ($expirationDate === false || $expirationDate === NULL) {
 </head>
 <body>
 <header>
-    <div class="logo">Anonfile</div>
-    <nav>
-        <a href="../index.php">Home</a>
-        <a href="../pricing.php">Pricing</a>
-        <a href="login.php">Login</a>
-    </nav>
+ <div class="logo">Anonfile</div>
+<?php
+
+include("header.php");	
+	
+?>
+   
+
 </header>
 <main>
     <div class="container">

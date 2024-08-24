@@ -1,8 +1,8 @@
 <?php
 $host = '127.0.0.1'; // Database host
-$dbname = 'afadafad'; // Database name
-$username = 'c0ed3ab1'; // New database username
-$password = '114aecaa4c84a48d47b3270332eb4bd7'; // Password for the new database user
+$dbname = 'dggsfsffesdf'; // Database name
+$username = 'af6d7f85'; // New database username
+$password = '8d9a41ec283a22750c89d4b8b54a9045'; // Password for the new database user
 
 // Create a database connection
 try {

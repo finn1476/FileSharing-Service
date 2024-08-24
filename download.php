@@ -6,12 +6,12 @@ ini_set('display_errors', 1);
 ?>
 <header>
     <div class="logo">Anonfile</div>
-    <nav>
-      <a href="index.php">Home</a>
-      <a href="pricing.php">Pricing</a>
-      <a href="User/login.php">Login</a>
-    </nav>
-  </header>
+<?php
+
+include("templates/header.php");	
+	
+?>
+</header>
 <?php
 // Funktion, um die Dateigröße zu formatieren
 function formatSizeUnits($bytes) {
