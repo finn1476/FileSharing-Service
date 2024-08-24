@@ -77,23 +77,29 @@ For questions or suggestions, please open an [issue](https://github.com/finn1476
 
 ## Photo Gallery
 - Index
-![grafik](https://github.com/user-attachments/assets/2128d0df-b5f7-47d0-80f2-72e68b87f21c)
+![grafik](https://github.com/user-attachments/assets/c811ecf3-1c1a-4134-8299-374a1858621a)
+
 
 - Download
-![grafik](https://github.com/user-attachments/assets/cbd584d2-3cb3-4421-ac00-faa3d33b9aec)
+![grafik](https://github.com/user-attachments/assets/06b756c1-ba97-4669-9513-45962ca1b0a5)
+
 
 - Subscription
-![grafik](https://github.com/user-attachments/assets/1ca7abdd-49ee-4561-8a44-9df9e575c35f)
+![grafik](https://github.com/user-attachments/assets/7a4eb89a-2d69-4866-80aa-5a1f89511ef0)
 
 - Report
-![grafik](https://github.com/user-attachments/assets/3baaa4d4-e691-43aa-aac5-5064c4cef4ad)
+![grafik](https://github.com/user-attachments/assets/4e5c1324-a047-43d9-bf99-8f3938354c7b)
+
+
 
 - User
-![grafik](https://github.com/user-attachments/assets/b181a98f-4b87-4d5a-a6e4-2ef74ea9e145)
-![grafik](https://github.com/user-attachments/assets/227ae55d-d3ad-451f-bbf1-007f95022930)
+![grafik](https://github.com/user-attachments/assets/521e2b1c-016e-427e-8b13-dae930b26d26)
+![grafik](https://github.com/user-attachments/assets/162861fd-2221-4782-a280-3b3a2707c2a9)
+
 
 - Admin
-![grafik](https://github.com/user-attachments/assets/2c0131f4-e785-4b45-9e68-c0da3af32c86)
-![grafik](https://github.com/user-attachments/assets/ecf5fd58-da5f-4b96-a267-a1047a2499b4)
-![grafik](https://github.com/user-attachments/assets/e270fd41-2e24-447f-ba95-ad9091f39f7c)
+![grafik](https://github.com/user-attachments/assets/33c2601e-8724-4647-bf13-935c7385d8c8)
+![grafik](https://github.com/user-attachments/assets/8bdf3979-361d-4ac2-b6e0-0baf642dc951)
+![grafik](https://github.com/user-attachments/assets/8e5fadc4-fd20-43c4-ace3-25277ac3d64e)
+
 
