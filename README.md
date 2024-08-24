@@ -18,6 +18,7 @@ This web application allows users to quickly and easily upload files. The applic
 - **User Accounts**: Users can create accounts to manage their uploaded files and access additional features.
 - **Encryption**: Files are Stored encrypted on the Server.
 - **Paid Storage Upgrade**: Users can pay for additional storage space if they exceed the default storage limit.
+- **URL Shortener**: Users can Shorten URL.
 
 ## Planned Features
 
