@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 session_start();
 error_reporting(E_ALL);
@@ -88,7 +89,6 @@ $warn_config_value = function ($ini_name, $var_name, $var_val) {
 
 $uploadMaxFilesize = ini_get('upload_max_filesize');
 ?>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -337,12 +337,12 @@ include("templates/header.php");
 
   <main>
     <center><h2>File Upload</h2></center>
-    <div class="upload-container">
-      <div class="progress-wrapper">
+<div class="upload-container" id="uploadContainer" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+    <div class="progress-wrapper">
         <progress id="progressBar" value="0" max="100"></progress>
         <div class="progress-text">
-          <span id="status">No file selected</span>
-          <span id="loaded_n_total"></span>
+            <span id="status">No file selected</span>
+            <span id="loaded_n_total"></span>
         </div>
       </div>
       
@@ -351,9 +351,9 @@ include("templates/header.php");
       $maxsize = fgets($datei, 1000000000);
       fclose($datei);
       if ($totalSize < $maxsize) {
-          echo "<label for='file1' class='custom-file-upload'>
-                  <i class='upload-icon'>📁</i> Click to select file
-                </label>
+          echo " <label for='file1' class='custom-file-upload'>
+        <i class='upload-icon'>📁</i> Click to select file
+    </label>
                 <input type='file' name='file1' id='file1' onchange='uploadFile()'>";
 				
       } else {
@@ -407,7 +407,27 @@ include("templates/header.php");
       ajax.open("POST", "file_upload_parser.php");
       ajax.send(formdata);
     }
+function dragOverHandler(event) {
+    // Verhindert die Standard-Aktion, um das Ablegen zu erlauben
+    event.preventDefault();
+    // Optional: Ändern des Aussehens des Containers beim Ziehen einer Datei
+    document.getElementById("uploadContainer").style.borderColor = "#56cfe1";
+}
 
+function dropHandler(event) {
+    // Verhindert die Standard-Aktion (das Öffnen der Datei im Browser)
+    event.preventDefault();
+
+    // Zurücksetzen des Container-Stils
+    document.getElementById("uploadContainer").style.borderColor = "#d9e2ec";
+
+    // Holen Sie sich die Dateien aus dem Drop-Ereignis
+    var file = event.dataTransfer.files[0];
+    // Setzen Sie die Datei auf das Dateieingabefeld, damit sie hochgeladen werden kann
+    document.getElementById("file1").files = event.dataTransfer.files;
+    // Starten Sie den Upload
+    uploadFile();
+}
     function progressHandler(event) {
     
       var percent = (event.loaded / event.total) * 100;
